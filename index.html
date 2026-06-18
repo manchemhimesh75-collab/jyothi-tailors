@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jyothi Ladies Tailor | Expert Custom Stitching</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX compilation in browser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: {
+                            50: '#fdf3f3',
+                            100: '#fbe4e4',
+                            500: '#a31f24',
+                            600: '#8c151a',
+                            700: '#7b1113', // Primary Maroon
+                            800: '#671114',
+                            900: '#561416',
+                        },
+                        gold: {
+                            400: '#f3c651',
+                            500: '#d4af37', // Primary Gold
+                            600: '#b5952f',
+                        },
+                        cream: '#fdfbf7',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #fdfbf7; color: #333; }
+        h1, h2, h3, h4, h5, h6, .font-serif { font-family: '"Playfair Display"', serif; }
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdf3f3; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b5952f; }
+        
+        /* Modal Animation */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-animate { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Firebase Imports for Real-Time cloud persistence -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.FirebaseSDK = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
+            getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc, getDocs
+        };
+    </script>
+
+    <script type="text/babel" data-type="module" data-presets="react">
+        const { useState, useEffect } = React;
+
+        const SHOP_NAME = "Jyothi Ladies Tailor";
+        const WHATSAPP_NUMBER = "919948698878"; // Updated with owner's active WhatsApp number
+        const ADMIN_PASSCODE = "1234"; // Secret owner login passcode
+
+        const translations = {
+            en: {
+                nav: { home: "Home", services: "Services", gallery: "Gallery", order: "Place Order", contact: "Contact", admin: "Owner Panel" },
+                hero: { title: "Expert Ladies Tailor", subtitle: "Specializing in custom stitching, precise alterations, and exquisite designer wear for women.", btnDesigns: "View Designs", btnOrder: "Place Order Now" },
+                about: { title: "About Us", text1: "With over 15 years of experience in fashion and dressmaking, we specialize in creating custom-fit ethnic and western wear for women.", text2: "From intricate saree blouses to elegant lehengas and perfect-fitting chudidars, we ensure high-quality stitching and timely delivery.", quality: "Quality Stitching", fit: "Custom Fitting", experience: "15+ Years Experience" },
+                services: { title: "Our Services", desc: "Expert tailoring for all your clothing needs.", custom: "Custom Stitching", customDesc: "Perfect fit for blouses, suits, gowns, and more.", alterations: "Alterations", alterationsDesc: "Precise adjustments for your existing wardrobe.", designer: "Designer Wear", designerDesc: "Bring your dream designs to life." },
+                categories: ['Blouses', 'Saree Blouses', 'Chudidars', 'Salwar Suits', 'Kurtis', 'Tops', 'Gowns', 'Lehengas', 'Skirts'],
+                form: { title: "Place Your Order", name: "Full Name", phone: "Mobile Number", whatsapp: "WhatsApp Number", email: "Email (Optional)", address: "Full Address", dressType: "Dress Type Required", fabricDetails: "Fabric Details", measurements: "Measurements (Text)", uploadDesign: "Upload Design Image", uploadMeasurement: "Upload Measurement Sheet", instructions: "Special Instructions", submit: "Submit Order", success: "Order Placed Successfully! We will contact you soon." },
+                admin: { title: "Owner Dashboard", orderId: "Order ID", customer: "Customer", item: "Item", status: "Status", action: "Action", updateBtn: "Update" },
+                contact: { title: "Contact Us", secretAddress: "For privacy and security, our shop address is provided to confirmed customers only. Please contact us or place an order to visit.", phone: "Call Us", whatsappBtn: "Chat on WhatsApp" },
+                footer: { rights: "All rights reserved." },
+                whatsappFloater: { msg: "Hello! How can we help you today?" },
+                waOrderMsg: "Hello, I would like to place a tailoring order.%0A*Name:* %0A*Dress Type:* %0A*Preferred Delivery Date:* %0A%0APlease contact me.",
+                waMeasureMsg: "Hello, I am sending measurements/designs for my order.",
+                faq: { title: "Frequently Asked Questions",
+                    q1: "What types of dresses do you stitch?", a1: "Blouses, chudidars, tops, kurtis, gowns, lehengas, skirts, and other ladies' garments.",
+                    q2: "How do I place an order?", a2: "Submit the online order form or contact us through WhatsApp.",
+                    q3: "Can I send my fabric by courier?", a3: "Yes. After confirming your order, we will provide the address for shipping fabric.",
+                    q4: "How do I send measurements?", a4: "Upload measurements through the website or send them on WhatsApp.",
+                    q5: "Do you provide alteration services?", a5: "Yes. We offer alteration and fitting adjustment services."
+                },
+                testimonials: { title: "What Our Customers Say" }
+            }
+        };
+
+        const defaultGallery = [
+            { id: 'gal-1', cat: 'Blouses', img: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=500', title: 'Silk Saree Blouse with Embroidery' },
+            { id: 'gal-2', cat: 'Lehengas', img: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=500', title: 'Royal Bridal Lehenga' },
+            { id: 'gal-3', cat: 'Chudidars', img: 'https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&q=80&w=500', title: 'Elegant Cotton Chudidar Suit' },
+            { id: 'gal-4', cat: 'Gowns', img: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=500', title: 'Premium Evening Gown' }
+        ];
+
+        const initialOrders = [
+            { id: 'ORD-101', name: 'Priya Sharma', phone: '9876543210', dressType: 'Blouses', status: 'Stitching In Progress', date: '2026-06-15', dueDate: '2026-06-20', amount: 1500, discount: 200, address: 'Gandhipuram, East Godavari' },
+            { id: 'ORD-102', name: 'Lakshmi Reddy', phone: '9123456789', dressType: 'Lehengas', status: 'Received', date: '2026-06-16', dueDate: '2026-06-30', amount: 9500, discount: 1000, address: 'Omkar Street, Gandhipuram' }
+        ];
+
+        // --- Core UI Sub-Components ---
+
+        const Button = ({ children, onClick, variant = 'primary', className = '', type = 'button' }) => {
+            const baseStyle = "px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md transform hover:-translate-y-0.5 active:translate-y-0";
+            const variants = {
+                primary: "bg-maroon-700 text-white hover:bg-maroon-800 hover:shadow-lg",
+                secondary: "bg-gold-500 text-white hover:bg-gold-600 hover:shadow-lg",
+                outline: "border-2 border-maroon-700 text-maroon-700 hover:bg-maroon-50",
+                danger: "bg-red-600 text-white hover:bg-red-700 hover:shadow-md",
+                whatsapp: "bg-[#25D366] text-white hover:bg-[#128C7E] hover:shadow-lg"
+            };
+            return (
+                <button type={type} onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
+                    {children}
+                </button>
+            );
+        };
+
+        const SectionHeading = ({ title, subtitle }) => (
+            <div className="text-center mb-12">
+                <h2 className="text-4xl font-serif text-maroon-700 mb-4">{title}</h2>
+                {subtitle && <p className="text-gray-600 max-w-2xl mx-auto text-sm">{subtitle}</p>}
+                <div className="w-24 h-1 bg-gold-500 mx-auto mt-4 rounded"></div>
+            </div>
+        );
+
+        const Navbar = ({ currentView, setView, t, isAdmin, logOutAdmin, openLoginModal }) => {
+            const [isOpen, setIsOpen] = useState(false);
+
+            const navItems = [
+                { id: 'home', label: t.nav.home },
+                { id: 'services', label: t.nav.services },
+                { id: 'gallery', label: t.nav.gallery },
+                { id: 'contact', label: t.nav.contact },
+            ];
+
+            return (
+                <nav className="bg-white shadow-md sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between h-20">
+                            <div className="flex items-center cursor-pointer" onClick={() => setView('home')}>
+                                <div className="w-10 h-10 bg-maroon-700 text-gold-500 rounded-full flex items-center justify-center font-serif text-2xl font-bold mr-3 shadow-sm">J</div>
+                                <span className="font-serif text-xl sm:text-2xl font-bold text-maroon-700 tracking-wide">{SHOP_NAME}</span>
+                            </div>
+                            
+                            {/* Desktop Nav */}
+                            <div className="hidden md:flex items-center space-x-6">
+                                {navItems.map(item => (
+                                    <button 
+                                        key={item.id} 
+                                        onClick={() => setView(item.id)}
+                                        className={`font-medium transition-colors hover:text-gold-500 ${currentView === item.id ? 'text-gold-500 border-b-2 border-gold-500' : 'text-gray-700'}`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ))}
+                                <Button variant="primary" onClick={() => setView('order')} className="ml-4 py-2 text-sm">
+                                    {t.nav.order}
+                                </Button>
+                                {isAdmin ? (
+                                    <div className="flex items-center space-x-3 ml-4 bg-maroon-50 px-3 py-1.5 rounded-full border border-maroon-100">
+                                        <span className="text-xs font-bold text-maroon-800"><i className="fa-solid fa-crown text-gold-500 mr-1"></i>Owner</span>
+                                        <button onClick={() => setView('admin')} className="text-xs font-semibold text-blue-600 hover:underline">Control Panel</button>
+                                        <button onClick={logOutAdmin} className="text-xs font-bold text-red-600 hover:text-red-800"><i className="fa-solid fa-sign-out-alt"></i></button>
+                                    </div>
+                                ) : (
+                                    <button onClick={openLoginModal} className="text-gray-400 hover:text-maroon-700 text-sm ml-2" title="Owner Login">
+                                        <i className="fa-solid fa-lock"></i>
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Mobile menu button */}
+                            <div className="flex items-center md:hidden space-x-4">
+                                <button onClick={() => setIsOpen(!isOpen)} className="text-maroon-700 hover:text-gold-500 focus:outline-none">
+                                    <i className={`fa-solid ${isOpen ? 'fa-times' : 'fa-bars'} text-2xl`}></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Mobile Nav */}
+                    {isOpen && (
+                        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg modal-animate z-50">
+                            <div className="px-4 pt-2 pb-6 space-y-2">
+                                {navItems.map(item => (
+                                    <button 
+                                        key={item.id} 
+                                        onClick={() => { setView(item.id); setIsOpen(false); }}
+                                        className={`block w-full text-left px-3 py-2.5 rounded-md text-base font-medium ${currentView === item.id ? 'text-maroon-700 bg-maroon-50' : 'text-gray-700 hover:text-maroon-700 hover:bg-gray-50'}`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ))}
+                                <button 
+                                    onClick={() => { setView('order'); setIsOpen(false); }}
+                                    className="block w-full text-center px-3 py-3 rounded-md text-base font-medium bg-maroon-700 text-white mt-4"
+                                >
+                                    {t.nav.order}
+                                </button>
+                                
+                                <div className="border-t border-gray-100 pt-4 mt-4">
+                                    {isAdmin ? (
+                                        <div className="flex items-center justify-between bg-maroon-50 p-3 rounded-lg">
+                                            <span className="text-sm font-bold text-maroon-800" onClick={() => { setView('admin'); setIsOpen(false); }}><i className="fa-solid fa-crown text-gold-500 mr-2"></i>Owner Panel</span>
+                                            <button onClick={() => { logOutAdmin(); setIsOpen(false); }} className="text-sm font-bold text-red-600 hover:underline">Logout</button>
+                                        </div>
+                                    ) : (
+                                        <button onClick={() => { openLoginModal(); setIsOpen(false); }} className="text-gray-500 hover:text-maroon-700 text-sm font-medium flex items-center justify-center w-full py-2 bg-gray-50 rounded-lg">
+                                            <i className="fa-solid fa-lock mr-2"></i> Owner Portal Access
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </nav>
+            );
+        };
+
+        const HomeView = ({ t, setView }) => {
+            const testimonials = [
+                { name: "Anjali M.", rating: 5, text: "Excellent blouse stitching and perfect fitting. The detailed work on the sleeves was exactly what I wanted. Highly recommended!" },
+                { name: "Sowmya K.", rating: 5, text: "Very professional work and delivered on time for my cousin's wedding. The custom lehenga was beautiful." },
+                { name: "Radhika P.", rating: 4, text: "Beautiful designer chudidars with excellent finishing. Will definitely order again." }
+            ];
+
+            return (
+                <div className="bg-pattern min-h-screen">
+                    {/* Hero Section */}
+                    <section className="relative bg-maroon-900 text-white py-16 lg:py-28 overflow-hidden">
+                        <div className="absolute inset-0 opacity-20 bg-[url('https://placehold.co/1920x1080/7b1113/7b1113?text=Pattern')] bg-cover bg-center mix-blend-overlay"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-maroon-900 to-transparent"></div>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center">
+                            <div className="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-6 text-gold-400 leading-tight">
+                                    {t.hero.title}
+                                </h1>
+                                <p className="text-base sm:text-lg mb-10 text-gray-200 max-w-lg mx-auto md:mx-0">
+                                    {t.hero.subtitle}
+                                </p>
+                                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+                                    <Button onClick={() => setView('order')} variant="secondary" className="text-maroon-900 text-md px-8">
+                                        <i className="fa-solid fa-scissors mr-2"></i> {t.hero.btnOrder}
+                                    </Button>
+                                    <Button onClick={() => setView('gallery')} variant="outline" className="border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-maroon-900 text-md px-8">
+                                        <i className="fa-regular fa-image mr-2"></i> {t.hero.btnDesigns}
+                                    </Button>
+                                </div>
+                            </div>
+                            <div className="md:w-1/2 flex justify-center">
+                                <div className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-t-full overflow-hidden border-4 border-gold-500 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                                    <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600" alt="Tailoring Model" className="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Quick Features */}
+                    <section className="py-12 bg-white shadow-inner">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap justify-center gap-8 text-center">
+                            <div className="w-full sm:w-1/3 max-w-xs p-6 rounded-xl bg-cream border border-maroon-100 hover:shadow-lg transition">
+                                <i className="fa-solid fa-tape text-4xl text-gold-500 mb-4"></i>
+                                <h3 className="text-xl font-bold text-maroon-700 mb-2">{t.about.fit}</h3>
+                            </div>
+                            <div className="w-full sm:w-1/3 max-w-xs p-6 rounded-xl bg-cream border border-maroon-100 hover:shadow-lg transition">
+                                <i className="fa-solid fa-gem text-4xl text-gold-500 mb-4"></i>
+                                <h3 className="text-xl font-bold text-maroon-700 mb-2">{t.about.quality}</h3>
+                            </div>
+                            <div className="w-full sm:w-1/3 max-w-xs p-6 rounded-xl bg-cream border border-maroon-100 hover:shadow-lg transition">
+                                <i className="fa-solid fa-award text-4xl text-gold-500 mb-4"></i>
+                                <h3 className="text-xl font-bold text-maroon-700 mb-2">{t.about.experience}</h3>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* About Summary */}
+                    <section className="py-20 bg-cream">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center">
+                            <div className="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                                <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=600" alt="Tailoring Process" className="rounded-lg shadow-xl" />
+                            </div>
+                            <div className="md:w-1/2">
+                                <SectionHeading title={t.about.title} />
+                                <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">{t.about.text1}</p>
+                                <p className="text-base sm:text-lg text-gray-700 mb-8 leading-relaxed">{t.about.text2}</p>
+                                <Button onClick={() => setView('services')}>{t.nav.services}</Button>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Testimonials */}
+                    <section className="py-20 bg-maroon-50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                            <SectionHeading title={t.testimonials.title} />
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {testimonials.map((review, idx) => (
+                                    <div key={idx} className="bg-white p-8 rounded-2xl shadow-md border-t-4 border-gold-500 relative">
+                                        <i className="fa-solid fa-quote-left text-4xl text-maroon-100 absolute top-4 left-4"></i>
+                                        <div className="flex text-gold-500 mb-4 mt-4 relative z-10">
+                                            {[...Array(review.rating)].map((_, i) => <i key={i} className="fa-solid fa-star"></i>)}
+                                        </div>
+                                        <p className="text-gray-600 italic mb-6 relative z-10">"{review.text}"</p>
+                                        <h4 className="font-bold text-maroon-700 text-lg">- {review.name}</h4>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* FAQ */}
+                    <section className="py-20 bg-white">
+                        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+                            <SectionHeading title={t.faq.title} />
+                            <div className="space-y-6">
+                                {[1, 2, 3, 4, 5].map(num => (
+                                    <div key={num} className="bg-cream rounded-lg p-6 shadow-sm border border-maroon-50">
+                                        <h3 className="text-lg font-bold text-maroon-700 mb-2 flex items-start">
+                                            <i className="fa-solid fa-circle-question text-gold-500 mt-1 mr-3"></i>
+                                            {t.faq[`q${num}`]}
+                                        </h3>
+                                        <p className="text-gray-700 pl-8">{t.faq[`a${num}`]}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        const ServicesView = ({ t, setView }) => {
+            const services = [
+                { icon: "fa-scissors", title: t.services.custom, desc: t.services.customDesc },
+                { icon: "fa-ruler", title: t.services.alterations, desc: t.services.alterationsDesc },
+                { icon: "fa-star", title: t.services.designer, desc: t.services.designerDesc }
+            ];
+
+            return (
+                <div className="py-20 bg-pattern min-h-screen">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <SectionHeading title={t.services.title} subtitle={t.services.desc} />
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+                            {services.map((srv, idx) => (
+                                <div key={idx} className="bg-white p-8 rounded-xl shadow-lg text-center border-b-4 border-maroon-700 hover:-translate-y-2 transition duration-300">
+                                    <div className="w-20 h-20 mx-auto bg-maroon-50 rounded-full flex items-center justify-center mb-6">
+                                        <i className={`fa-solid ${srv.icon} text-3xl text-maroon-700`}></i>
+                                    </div>
+                                    <h3 className="text-2xl font-serif font-bold text-maroon-800 mb-4">{srv.title}</h3>
+                                    <p className="text-gray-600">{srv.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="bg-maroon-800 text-white rounded-2xl p-10 text-center shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-cover"></div>
+                            <h2 className="text-3xl font-serif font-bold mb-6 relative z-10">Ready to get the perfect fit?</h2>
+                            <p className="mb-8 text-maroon-100 text-lg relative z-10">Contact us on WhatsApp to discuss your design or place an order online.</p>
+                            <div className="flex flex-wrap justify-center gap-4 relative z-10">
+                                <Button onClick={() => setView('order')} variant="secondary">Place Order</Button>
+                                <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${t.waOrderMsg}`} target="_blank" rel="noreferrer" className="inline-block px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md bg-[#25D366] text-white hover:bg-[#128C7E]">
+                                    <i className="fa-brands fa-whatsapp mr-2"></i> WhatsApp Us
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const GalleryView = ({ t, galleryItems, isAdmin, onDeleteGalleryItem }) => {
+            const [selectedCategory, setSelectedCategory] = useState('All');
+            const categories = ['All', ...t.categories];
+
+            const filteredItems = selectedCategory === 'All' 
+                ? galleryItems 
+                : galleryItems.filter(item => item.cat === selectedCategory);
+
+            return (
+                <div className="py-16 bg-cream min-h-screen">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <SectionHeading title={t.nav.gallery} subtitle="Explore our latest designs and stitching quality. New styles uploaded regularly." />
+                        
+                        {/* Category Tags filter */}
+                        <div className="flex flex-wrap justify-center gap-2 mb-12">
+                            {categories.map((cat, idx) => (
+                                <button 
+                                    key={idx} 
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`px-4 py-2 border rounded-full text-sm font-medium shadow-sm transition-all duration-200 ${
+                                        selectedCategory === cat 
+                                            ? 'bg-maroon-700 text-white border-maroon-700' 
+                                            : 'bg-white text-maroon-700 border-maroon-200 hover:bg-maroon-50'
+                                    }`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredItems.map((item, idx) => (
+                                <div key={item.id || idx} className="group relative overflow-hidden rounded-xl shadow-lg bg-white border border-maroon-50">
+                                    <img src={item.img} alt={item.title || item.cat} className="w-full h-80 object-cover transform group-hover:scale-105 transition duration-500" />
+                                    
+                                    {/* Admin Delete Action */}
+                                    {isAdmin && (
+                                        <button 
+                                            onClick={() => {
+                                                if(confirm("Are you sure you want to delete this design from your gallery?")) {
+                                                    onDeleteGalleryItem(item.id);
+                                                }
+                                            }}
+                                            className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 z-20"
+                                            title="Delete Image"
+                                        >
+                                            <i className="fa-solid fa-trash"></i>
+                                        </button>
+                                    )}
+
+                                    <div className="absolute inset-0 bg-gradient-to-t from-maroon-950 via-maroon-950/20 to-transparent opacity-0 group-hover:opacity-95 transition duration-300 flex flex-col justify-end p-6">
+                                        <span className="text-gold-400 text-xs font-bold uppercase tracking-wider mb-1">{item.cat}</span>
+                                        <h3 className="text-white text-lg font-serif font-bold">{item.title || "Custom Stitch Design"}</h3>
+                                    </div>
+                                </div>
+                            ))}
+                            {filteredItems.length === 0 && (
+                                <div className="col-span-full text-center py-12 text-gray-500">
+                                    No custom designs uploaded in this category yet.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const OrderFormView = ({ t, addOrder }) => {
+            const [formData, setFormData] = useState({
+                name: '', phone: '', whatsapp: '', email: '', address: '', dressType: '', fabricDetails: '', measurements: '', instructions: ''
+            });
+            const [designImage, setDesignImage] = useState(null);
+            const [measurementSheet, setMeasurementSheet] = useState(null);
+            const [measurementFileName, setMeasurementFileName] = useState('');
+            const [submitted, setSubmitted] = useState(false);
+            const [orderId, setOrderId] = useState('');
+
+            const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+            // Read customer file selections into base64 for instant client-side preview & database persistence
+            const handleDesignUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setDesignImage(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleMeasurementUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    setMeasurementFileName(file.name);
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setMeasurementSheet(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const newId = 'ORD-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+                const newOrder = {
+                    id: newId,
+                    ...formData,
+                    designImage: designImage,
+                    measurementSheet: measurementSheet,
+                    measurementFileName: measurementFileName,
+                    status: 'Received',
+                    date: new Date().toISOString().split('T')[0]
+                };
+                addOrder(newOrder);
+                setOrderId(newId);
+                setSubmitted(true);
+                window.scrollTo(0, 0);
+            };
+
+            if (submitted) {
+                return (
+                    <div className="py-20 min-h-[60vh] flex items-center justify-center bg-cream">
+                        <div className="bg-white p-10 rounded-2xl shadow-xl text-center max-w-md w-full border-t-4 border-green-500 modal-animate">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i className="fa-solid fa-check text-4xl text-green-500"></i>
+                            </div>
+                            <h2 className="text-3xl font-serif font-bold text-maroon-700 mb-4">Thank You!</h2>
+                            <p className="text-gray-600 mb-6">{t.form.success}</p>
+                            <div className="bg-gray-50 p-4 rounded-lg mb-8 border border-gray-200">
+                                <p className="text-sm text-gray-500 mb-1">Your Order ID:</p>
+                                <p className="text-2xl font-mono font-bold text-maroon-800">{orderId}</p>
+                            </div>
+                            <p className="text-sm text-gray-500 mb-6">Please keep this ID to reference your order status.</p>
+                            
+                            <div className="bg-maroon-50 border border-maroon-100 p-4 rounded-lg text-left mb-6 text-sm">
+                                <p className="font-bold text-maroon-800 mb-2"><i className="fa-solid fa-location-dot mr-2"></i>Shop Address for Fabric Drop-off / Pick-up:</p>
+                                <div className="text-gray-700 leading-relaxed font-sans space-y-0.5">
+                                    <p className="font-bold text-maroon-900">MANCHEM JYOTHI</p>
+                                    <p>Dr.No: 79-20-3</p>
+                                    <p>Sri Sai Towers, Second Floor: B5</p>
+                                    <p>Omkar Street, Gandhi Puram</p>
+                                    <p className="text-xs text-gray-500 italic">Beside Vijatha Grand, Beside S Car Wash</p>
+                                    <p className="font-semibold">East Godavari, Andhra Pradesh</p>
+                                </div>
+                            </div>
+
+                            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello, I just placed order ${orderId} on your website. My name is ${formData.name}.`} target="_blank" rel="noreferrer" className="block w-full px-6 py-3 rounded-md font-semibold bg-[#25D366] text-white hover:bg-[#128C7E] transition mb-3">
+                                <i className="fa-brands fa-whatsapp mr-2"></i> Message on WhatsApp
+                            </a>
+                            <Button onClick={() => setSubmitted(false)} variant="outline" className="w-full">Place Another Order</Button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const inputStyle = "w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-maroon-500 focus:border-transparent outline-none transition";
+            const labelStyle = "block text-sm font-semibold text-gray-700 mb-2";
+
+            return (
+                <div className="py-12 bg-pattern min-h-screen">
+                    <div className="max-w-3xl mx-auto px-4">
+                        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-maroon-100">
+                            <div className="bg-maroon-800 py-6 px-8 text-center">
+                                <h2 className="text-3xl font-serif font-bold text-gold-400">{t.form.title}</h2>
+                                <p className="text-maroon-100 mt-2">Fill the details below. Only the owner can view your details.</p>
+                            </div>
+                            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className={labelStyle}>{t.form.name} *</label>
+                                        <input required type="text" name="name" value={formData.name} onChange={handleChange} className={inputStyle} placeholder="Your Full Name" />
+                                    </div>
+                                    <div>
+                                        <label className={labelStyle}>{t.form.phone} *</label>
+                                        <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} className={inputStyle} placeholder="10-digit mobile number" />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className={labelStyle}>{t.form.whatsapp}</label>
+                                        <input type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} className={inputStyle} placeholder="If different from mobile" />
+                                    </div>
+                                    <div>
+                                        <label className={labelStyle}>{t.form.email}</label>
+                                        <input type="email" name="email" value={formData.email} onChange={handleChange} className={inputStyle} placeholder="For updates (optional)" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className={labelStyle}>{t.form.address} *</label>
+                                    <textarea required name="address" value={formData.address} onChange={handleChange} rows="2" className={inputStyle} placeholder="Your residential delivery address"></textarea>
+                                </div>
+                                
+                                <div className="border-t border-gray-200 pt-6 mt-6">
+                                    <h3 className="text-xl font-serif text-maroon-700 mb-4">Design & Measurements</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                        <div>
+                                            <label className={labelStyle}>{t.form.dressType} *</label>
+                                            <select required name="dressType" value={formData.dressType} onChange={handleChange} className={`${inputStyle} bg-white`}>
+                                                <option value="">Select Category</option>
+                                                {t.categories.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+                                                <option value="Other">Other Custom Design</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className={labelStyle}>{t.form.fabricDetails}</label>
+                                            <input type="text" name="fabricDetails" value={formData.fabricDetails} onChange={handleChange} className={inputStyle} placeholder="e.g., Silk, Cotton, Net Material" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mb-6">
+                                        <label className={labelStyle}>{t.form.measurements}</label>
+                                        <textarea name="measurements" value={formData.measurements} onChange={handleChange} rows="3" className={inputStyle} placeholder="Write your body measurements (e.g., Chest: 36, Shoulder: 14...)"></textarea>
+                                    </div>
+
+                                    {/* Interactive Dropzones / Clickable File Upload inputs */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                        <label className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:border-maroon-700 transition cursor-pointer block relative">
+                                            <input 
+                                                type="file" 
+                                                accept="image/*" 
+                                                onChange={handleDesignUpload} 
+                                                className="hidden" 
+                                            />
+                                            {designImage ? (
+                                                <div className="flex flex-col items-center">
+                                                    <img src={designImage} className="h-20 object-contain mb-2 rounded border" />
+                                                    <span className="text-xs text-green-600 font-semibold"><i className="fa-solid fa-circle-check mr-1"></i> Design Image Loaded</span>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                                    <p className="text-sm font-semibold text-maroon-700">{t.form.uploadDesign}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">Tap to select Image (JPEG, PNG)</p>
+                                                </>
+                                            )}
+                                        </label>
+
+                                        <label className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:border-maroon-700 transition cursor-pointer block relative">
+                                            <input 
+                                                type="file" 
+                                                accept="image/*,application/pdf" 
+                                                onChange={handleMeasurementUpload} 
+                                                className="hidden" 
+                                            />
+                                            {measurementSheet ? (
+                                                <div className="flex flex-col items-center justify-center h-full">
+                                                    <i className="fa-solid fa-file-circle-check text-3xl text-green-500 mb-2"></i>
+                                                    <span className="text-xs text-green-600 font-semibold truncate max-w-[200px]" title={measurementFileName}>
+                                                        {measurementFileName || "Measurement Sheet Loaded"}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <i className="fa-solid fa-file-image text-3xl text-gray-400 mb-2"></i>
+                                                    <p className="text-sm font-semibold text-maroon-700">{t.form.uploadMeasurement}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">Tap to select (PDF or Image)</p>
+                                                </>
+                                            )}
+                                        </label>
+                                    </div>
+                                    <div className="bg-blue-50 p-3 rounded-md flex items-start text-sm text-blue-800 mb-6">
+                                        <i className="fa-solid fa-circle-info mt-1 mr-2"></i>
+                                        <p>Alternatively, you can send measurement sheets and custom design references on <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${t.waMeasureMsg}`} className="font-bold underline" target="_blank" rel="noreferrer">WhatsApp</a> after submitting.</p>
+                                    </div>
+
+                                    <div>
+                                        <label className={labelStyle}>{t.form.instructions}</label>
+                                        <textarea name="instructions" value={formData.instructions} onChange={handleChange} rows="2" className={inputStyle} placeholder="Sleeve length, lining preferences, neck shape..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div className="pt-4">
+                                    <Button type="submit" className="w-full py-4 text-lg">{t.form.submit}</Button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const AdminDashboardView = ({ t, orders, updateOrderStatus, galleryItems, onAddGalleryItem, onAddOrder, onDeleteOrder }) => {
+            const statusOptions = ['Received', 'Fabric Received', 'Stitching In Progress', 'Ready', 'Shipped'];
+
+            // Tab management state for owner quick actions
+            const [activeOwnerTab, setActiveOwnerTab] = useState('manualOrder'); // 'manualOrder' or 'uploadGallery'
+            
+            // Notification message state (replacing basic alerts)
+            const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
+
+            // State to trigger custom order deletion modal instead of standard confirm
+            const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, targetId: null, targetType: '' });
+
+            // State for uploading new design
+            const [newDesign, setNewDesign] = useState({
+                cat: 'Blouses',
+                title: '',
+                imgUrl: '',
+                imageFile: ''
+            });
+
+            // State for manual walk-in or offline orders
+            const [manualOrder, setManualOrder] = useState({
+                name: '',
+                phone: '',
+                whatsapp: '',
+                dressType: 'Blouses',
+                fabricDetails: '',
+                measurements: '',
+                instructions: '',
+                dueDate: '',
+                amount: '',
+                discount: '',
+                address: 'Manual Walk-In Client / Hand Delivered'
+            });
+
+            // Trigger temporary styled toast alerts
+            const triggerNotification = (message, type = 'success') => {
+                setNotification({ show: true, message, type });
+                setTimeout(() => {
+                    setNotification({ show: false, message: '', type: 'success' });
+                }, 4000);
+            };
+
+            const handleFileChange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setNewDesign({ ...newDesign, imageFile: reader.result });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleUploadDesign = (e) => {
+                e.preventDefault();
+                const imageToUpload = newDesign.imageFile || newDesign.imgUrl || 'https://placehold.co/400x500/8c151a/fdfbf7?text=Design';
+                
+                const item = {
+                    id: 'gal-' + Date.now(),
+                    cat: newDesign.cat,
+                    title: newDesign.title || `${newDesign.cat} Design`,
+                    img: imageToUpload
+                };
+
+                onAddGalleryItem(item);
+                
+                // Reset upload form
+                setNewDesign({
+                    cat: 'Blouses',
+                    title: '',
+                    imgUrl: '',
+                    imageFile: ''
+                });
+                triggerNotification("Custom design successfully added to public customer gallery!");
+            };
+
+            const handleManualOrderSubmit = (e) => {
+                e.preventDefault();
+                const newId = 'ORD-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+                
+                const finalOrder = {
+                    id: newId,
+                    name: manualOrder.name,
+                    phone: manualOrder.phone,
+                    whatsapp: manualOrder.whatsapp || manualOrder.phone,
+                    dressType: manualOrder.dressType,
+                    fabricDetails: manualOrder.fabricDetails,
+                    measurements: manualOrder.measurements,
+                    instructions: manualOrder.instructions,
+                    dueDate: manualOrder.dueDate,
+                    amount: Number(manualOrder.amount) || 0,
+                    discount: Number(manualOrder.discount) || 0,
+                    address: manualOrder.address,
+                    status: 'Received',
+                    date: new Date().toISOString().split('T')[0]
+                };
+
+                onAddOrder(finalOrder);
+
+                // Reset manual order form
+                setManualOrder({
+                    name: '',
+                    phone: '',
+                    whatsapp: '',
+                    dressType: 'Blouses',
+                    fabricDetails: '',
+                    measurements: '',
+                    instructions: '',
+                    dueDate: '',
+                    amount: '',
+                    discount: '',
+                    address: 'Manual Walk-In Client / Hand Delivered'
+                });
+
+                triggerNotification(`Order ${newId} created successfully with specified due date and custom discounts!`);
+            };
+
+            // Compute delivery date urgency with clean badges
+            const getDueDateBadge = (dueDateStr) => {
+                if (!dueDateStr) return <span className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full font-semibold">No Date Set</span>;
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const due = new Date(dueDateStr);
+                due.setHours(0, 0, 0, 0);
+                
+                const diffTime = due - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays < 0) {
+                    return (
+                        <span className="text-xs bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-full font-bold animate-pulse">
+                            <i className="fa-solid fa-circle-exclamation mr-1"></i> Overdue ({Math.abs(diffDays)}d)
+                        </span>
+                    );
+                } else if (diffDays <= 2) {
+                    return (
+                        <span className="text-xs bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full font-bold">
+                            <i className="fa-solid fa-clock mr-1"></i> Urgent ({diffDays}d)
+                        </span>
+                    );
+                } else {
+                    return (
+                        <span className="text-xs bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold">
+                            <i className="fa-solid fa-calendar-check mr-1"></i> On Track ({diffDays}d)
+                        </span>
+                    );
+                }
+            };
+
+            return (
+                <div className="py-12 bg-gray-100 min-h-screen">
+                    <div className="max-w-7xl mx-auto px-4">
+                        
+                        {/* Custom Toast Notifications */}
+                        {notification.show && (
+                            <div className={`fixed top-24 right-6 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 border transition-all duration-300 transform translate-y-0 ${
+                                notification.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'
+                            }`}>
+                                <i className={`fa-solid ${notification.type === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-circle-xmark text-red-500'} text-2xl`}></i>
+                                <p className="font-semibold text-sm">{notification.message}</p>
+                            </div>
+                        )}
+
+                        {/* Custom Modal Confirmation (Owner Delete/Action safety checks) */}
+                        {deleteConfirmation.show && (
+                            <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 modal-animate">
+                                <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full border-t-8 border-red-600">
+                                    <h3 className="text-lg font-serif font-bold text-red-700 mb-2">Confirm Action</h3>
+                                    <p className="text-sm text-gray-500 mb-6">Are you sure you want to proceed with deleting this item? This action is permanent.</p>
+                                    <div className="flex justify-end gap-3">
+                                        <button 
+                                            onClick={() => setDeleteConfirmation({ show: false, targetId: null, targetType: '' })}
+                                            className="px-4 py-2 bg-gray-100 rounded-md text-gray-700 font-semibold hover:bg-gray-200 transition text-sm"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                if (deleteConfirmation.targetType === 'order') {
+                                                    onDeleteOrder(deleteConfirmation.targetId);
+                                                    triggerNotification("Stitching order deleted successfully.", "error");
+                                                }
+                                                setDeleteConfirmation({ show: false, targetId: null, targetType: '' });
+                                            }}
+                                            className="px-4 py-2 bg-red-600 rounded-md text-white font-semibold hover:bg-red-700 transition text-sm"
+                                        >
+                                            Yes, Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Summary Header */}
+                        <div className="bg-maroon-800 rounded-t-xl p-6 text-white flex flex-col sm:flex-row justify-between items-center shadow-md gap-4">
+                            <h2 className="text-2xl font-serif font-bold">
+                                <i className="fa-solid fa-crown text-gold-500 mr-2"></i> Owner Command Center
+                            </h2>
+                            <span className="bg-maroon-900 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-gold-400">
+                                Live Database Enabled
+                            </span>
+                        </div>
+
+                        {/* Split Interface: Custom Tabs on Left, Manage Orders on Right */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                            
+                            {/* OWNER GALLERY & MANUAL ORDER FORM CONTAINER (LEFT) */}
+                            <div className="bg-white rounded-xl shadow-lg p-6 border border-maroon-50 lg:col-span-5 flex flex-col h-fit">
+                                
+                                {/* Toggle Tabs for Owner Control Panel */}
+                                <div className="flex border-b border-gray-200 mb-6">
+                                    <button 
+                                        onClick={() => setActiveOwnerTab('manualOrder')}
+                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 ${
+                                            activeOwnerTab === 'manualOrder' 
+                                                ? 'border-maroon-700 text-maroon-700 font-extrabold' 
+                                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-plus-circle mr-1"></i> Add Live Order
+                                    </button>
+                                    <button 
+                                        onClick={() => setActiveOwnerTab('uploadGallery')}
+                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 ${
+                                            activeOwnerTab === 'uploadGallery' 
+                                                ? 'border-maroon-700 text-maroon-700 font-extrabold' 
+                                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-cloud-upload mr-1"></i> Upload Gallery
+                                    </button>
+                                </div>
+
+                                {activeOwnerTab === 'manualOrder' ? (
+                                    <form onSubmit={handleManualOrderSubmit} className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Customer Name *</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={manualOrder.name}
+                                                    onChange={(e) => setManualOrder({...manualOrder, name: e.target.value})}
+                                                    placeholder="Jane Doe"
+                                                    className="w-full p-2.5 border rounded-lg text-sm focus:ring-1 focus:ring-maroon-500"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Mobile Number *</label>
+                                                <input 
+                                                    type="tel" 
+                                                    value={manualOrder.phone}
+                                                    onChange={(e) => setManualOrder({...manualOrder, phone: e.target.value})}
+                                                    placeholder="Phone"
+                                                    className="w-full p-2.5 border rounded-lg text-sm focus:ring-1 focus:ring-maroon-500"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Dress Type Required *</label>
+                                                <select 
+                                                    value={manualOrder.dressType} 
+                                                    onChange={(e) => setManualOrder({...manualOrder, dressType: e.target.value})}
+                                                    className="w-full p-2.5 border rounded-lg bg-white text-sm"
+                                                    required
+                                                >
+                                                    {t.categories.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+                                                    <option value="Other">Other Custom</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Due Delivery Date *</label>
+                                                <input 
+                                                    type="date" 
+                                                    value={manualOrder.dueDate}
+                                                    onChange={(e) => setManualOrder({...manualOrder, dueDate: e.target.value})}
+                                                    className="w-full p-2 border rounded-lg text-sm"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4 bg-maroon-50/50 p-3 rounded-lg border border-maroon-100">
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-maroon-800 uppercase mb-1">Stitching Amount (₹) *</label>
+                                                <input 
+                                                    type="number" 
+                                                    min="0"
+                                                    value={manualOrder.amount}
+                                                    onChange={(e) => setManualOrder({...manualOrder, amount: e.target.value})}
+                                                    placeholder="Stitching Charges"
+                                                    className="w-full p-2 border rounded-lg text-sm"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-maroon-800 uppercase mb-1">Special Discount (₹)</label>
+                                                <input 
+                                                    type="number" 
+                                                    min="0"
+                                                    value={manualOrder.discount}
+                                                    onChange={(e) => setManualOrder({...manualOrder, discount: e.target.value})}
+                                                    placeholder="Discount amount"
+                                                    className="w-full p-2 border rounded-lg text-sm"
+                                                />
+                                            </div>
+                                            <div className="col-span-2 text-right pt-1 border-t border-maroon-100">
+                                                <p className="text-xs font-bold text-maroon-900">
+                                                    Net Final Payable: <span className="text-sm font-mono text-gold-600">₹{(Number(manualOrder.amount) || 0) - (Number(manualOrder.discount) || 0)}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Fabric Details</label>
+                                            <input 
+                                                type="text" 
+                                                value={manualOrder.fabricDetails}
+                                                onChange={(e) => setManualOrder({...manualOrder, fabricDetails: e.target.value})}
+                                                placeholder="e.g., Banarasi Silk (Provided by client)"
+                                                className="w-full p-2 border rounded-lg text-sm"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Client Measurements</label>
+                                            <textarea 
+                                                value={manualOrder.measurements}
+                                                onChange={(e) => setManualOrder({...manualOrder, measurements: e.target.value})}
+                                                placeholder="e.g., Chest: 34, Shoulder: 13, Length: 15"
+                                                rows="2"
+                                                className="w-full p-2 border rounded-lg text-xs"
+                                            ></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">Special Design Notes</label>
+                                            <textarea 
+                                                value={manualOrder.instructions}
+                                                onChange={(e) => setManualOrder({...manualOrder, instructions: e.target.value})}
+                                                placeholder="Sleeve patterns, embroidery details, lining notes..."
+                                                rows="2"
+                                                className="w-full p-2 border rounded-lg text-xs"
+                                            ></textarea>
+                                        </div>
+
+                                        <Button type="submit" variant="primary" className="w-full text-white font-bold py-3 mt-2 rounded-lg">
+                                            <i className="fa-solid fa-plus-circle mr-1"></i> Register Walk-In Order
+                                        </Button>
+                                    </form>
+                                ) : (
+                                    <form onSubmit={handleUploadDesign} className="space-y-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Select Category</label>
+                                            <select 
+                                                value={newDesign.cat} 
+                                                onChange={(e) => setNewDesign({...newDesign, cat: e.target.value})}
+                                                className="w-full p-2.5 border rounded-lg bg-white"
+                                            >
+                                                {t.categories.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Design Title / Name</label>
+                                            <input 
+                                                type="text" 
+                                                value={newDesign.title}
+                                                onChange={(e) => setNewDesign({...newDesign, title: e.target.value})}
+                                                placeholder="e.g., Heavy Zardozi Work Blouse"
+                                                className="w-full p-2.5 border rounded-lg"
+                                                required
+                                            />
+                                        </div>
+                                        
+                                        <div className="bg-cream p-4 rounded-lg border border-maroon-100">
+                                            <label className="block text-xs font-bold text-maroon-800 uppercase mb-1">Upload from Phone/PC</label>
+                                            <input 
+                                                type="file" 
+                                                accept="image/*"
+                                                onChange={handleFileChange}
+                                                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-maroon-50 file:text-maroon-700 hover:file:bg-maroon-100"
+                                            />
+                                            {newDesign.imageFile && (
+                                                <div className="mt-2 text-center">
+                                                    <span className="text-[10px] text-green-600 block mb-1">Image Loaded Successfully!</span>
+                                                    <img src={newDesign.imageFile} className="h-20 mx-auto rounded border" />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="text-center text-xs text-gray-400 font-bold uppercase py-1">OR</div>
+
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Paste Image Link (URL)</label>
+                                            <input 
+                                                type="url" 
+                                                value={newDesign.imgUrl}
+                                                onChange={(e) => setNewDesign({...newDesign, imgUrl: e.target.value})}
+                                                placeholder="https://example.com/dress.jpg"
+                                                className="w-full p-2.5 border rounded-lg text-sm"
+                                                disabled={!!newDesign.imageFile}
+                                            />
+                                        </div>
+
+                                        <Button type="submit" variant="secondary" className="w-full text-maroon-900 font-bold py-3">
+                                            <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Add Design to Gallery
+                                        </Button>
+                                    </form>
+                                )}
+                            </div>
+
+                            {/* LIVE CUSTOMER ORDERS MANAGEMENT (RIGHT) */}
+                            <div className="bg-white rounded-xl shadow-lg p-6 border border-maroon-50 lg:col-span-7">
+                                <h3 className="text-xl font-serif font-bold text-maroon-800 mb-4 pb-2 border-b flex justify-between items-center">
+                                    <span><i className="fa-solid fa-clipboard-list mr-2 text-gold-500"></i> Live Stitching Orders</span>
+                                    <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full font-mono font-bold">Active: {orders.length}</span>
+                                </h3>
+                                
+                                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                                    {orders.map(order => {
+                                        const finalAmount = (order.amount || 0) - (order.discount || 0);
+                                        return (
+                                            <div key={order.id} className="p-4 rounded-xl border border-gray-100 hover:border-maroon-100 transition bg-gray-50 flex flex-col md:flex-row justify-between gap-4">
+                                                <div className="space-y-2 flex-grow">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-mono font-bold text-sm text-maroon-700">{order.id}</span>
+                                                        <span className="text-xs bg-maroon-100 text-maroon-800 font-semibold px-2 py-0.5 rounded-full">{order.dressType}</span>
+                                                        {getDueDateBadge(order.dueDate)}
+                                                    </div>
+                                                    
+                                                    <h4 className="font-bold text-gray-800 text-base">{order.name}</h4>
+                                                    <p className="text-xs text-gray-500"><i className="fa-solid fa-phone mr-1"></i> {order.phone}</p>
+                                                    
+                                                    {/* Custom Instructions and Fabric info rendering */}
+                                                    {order.fabricDetails && (
+                                                        <p className="text-xs text-gray-600">
+                                                            <strong>Fabric:</strong> {order.fabricDetails}
+                                                        </p>
+                                                    )}
+
+                                                    {order.measurements && (
+                                                        <div className="text-[11px] bg-white p-2 rounded border border-gray-200">
+                                                            <strong className="text-maroon-800">Measurements:</strong> {order.measurements}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Custom Image and Document Upload Attachment Viewers for Owner */}
+                                                    {(order.designImage || order.measurementSheet) && (
+                                                        <div className="flex flex-wrap gap-2 pt-1">
+                                                            {order.designImage && (
+                                                                <a 
+                                                                    href={order.designImage} 
+                                                                    target="_blank" 
+                                                                    rel="noreferrer" 
+                                                                    className="text-[11px] bg-maroon-50 text-maroon-700 px-2.5 py-1 rounded border border-maroon-100 hover:bg-maroon-100 transition inline-flex items-center gap-1 font-bold"
+                                                                >
+                                                                    <i className="fa-solid fa-image"></i> View Design Image
+                                                                </a>
+                                                            )}
+                                                            {order.measurementSheet && (
+                                                                <a 
+                                                                    href={order.measurementSheet} 
+                                                                    target="_blank" 
+                                                                    rel="noreferrer" 
+                                                                    className="text-[11px] bg-maroon-50 text-maroon-700 px-2.5 py-1 rounded border border-maroon-100 hover:bg-maroon-100 transition inline-flex items-center gap-1 font-bold"
+                                                                >
+                                                                    <i className="fa-solid fa-file-invoice"></i> View Measure Sheet
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Financial values card rendering */}
+                                                    {order.amount ? (
+                                                        <div className="inline-flex flex-wrap gap-x-3 gap-y-1 text-xs bg-gold-500/10 text-maroon-900 px-3 py-1.5 rounded-md border border-gold-500/20 font-medium">
+                                                            <span>Stitching: ₹{order.amount}</span>
+                                                            <span className="text-gray-400">|</span>
+                                                            <span className="text-red-700">Disc: -₹{order.discount || 0}</span>
+                                                            <span className="text-gray-400">|</span>
+                                                            <span className="font-extrabold text-maroon-800">Net: ₹{finalAmount}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-[11px] italic text-gray-400">No custom amount entered</p>
+                                                    )}
+
+                                                    <p className="text-xs text-gray-600 bg-white p-2 rounded border border-gray-100 mt-2">
+                                                        <strong className="text-maroon-800"><i className="fa-solid fa-map-marker-alt"></i> Address:</strong> {order.address}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex flex-col justify-between items-end gap-3 min-w-[150px] shrink-0 border-t md:border-t-0 pt-3 md:pt-0 border-gray-200">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs text-gray-400">Due: {order.dueDate || "N/A"}</span>
+                                                        <button 
+                                                            onClick={() => setDeleteConfirmation({ show: true, targetId: order.id, targetType: 'order' })}
+                                                            className="text-red-500 hover:text-red-700 p-1" 
+                                                            title="Delete Order Record"
+                                                        >
+                                                            <i className="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <div className="w-full">
+                                                        <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1 text-right">Update Stage</label>
+                                                        <select 
+                                                            value={order.status}
+                                                            onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                                                            className="text-xs w-full p-2 border border-gray-300 rounded focus:ring-maroon-500 focus:border-maroon-500 bg-white font-semibold"
+                                                        >
+                                                            {statusOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                        </select>
+                                                    </div>
+
+                                                    <a 
+                                                        href={`https://wa.me/${order.phone}?text=Hello ${order.name}, update from Jyothi Ladies Tailor: order *${order.id}* is currently in status: *${order.status}*. Due date: *${order.dueDate || 'N/A'}*. Net total charges: *₹${finalAmount || 'N/A'}*.`} 
+                                                        target="_blank" 
+                                                        rel="noreferrer" 
+                                                        className="text-xs font-semibold text-green-600 hover:text-green-700 flex items-center gap-1"
+                                                    >
+                                                        <i className="fa-brands fa-whatsapp text-sm"></i> Send WhatsApp Status
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    {orders.length === 0 && (
+                                        <div className="text-center py-12 text-gray-400">
+                                            No orders submitted yet.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ContactView = ({ t }) => (
+            <div className="py-20 bg-pattern min-h-[70vh]">
+                <div className="max-w-4xl mx-auto px-4">
+                    <SectionHeading title={t.contact.title} />
+                    
+                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+                        <div className="md:w-1/2 bg-maroon-800 text-white p-10 flex flex-col justify-center">
+                            <h3 className="text-2xl font-serif mb-6 text-gold-400 font-bold">Get in Touch</h3>
+                            
+                            <div className="space-y-6">
+                                <div className="flex items-start">
+                                    <div className="w-10 h-10 rounded-full bg-maroon-700 flex items-center justify-center mr-4 shrink-0">
+                                        <i className="fa-solid fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-maroon-200">{t.contact.phone}</p>
+                                        <p className="font-semibold text-lg">+91 99486 98878</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="w-10 h-10 rounded-full bg-maroon-700 flex items-center justify-center mr-4 shrink-0">
+                                        <i className="fa-brands fa-whatsapp"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-maroon-200">WhatsApp</p>
+                                        <p className="font-semibold text-lg">+91 99486 98878</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start">
+                                    <div className="w-10 h-10 rounded-full bg-maroon-700 flex items-center justify-center mr-4 shrink-0">
+                                        <i className="fa-solid fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-maroon-200">Email Address</p>
+                                        <p className="font-semibold text-lg">orders@jyothitailors.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="md:w-1/2 p-10 flex flex-col justify-center bg-cream">
+                            {/* Privacy warning concept strictly enforced */}
+                            <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded text-sm text-amber-800 mb-8 shadow-inner">
+                                <p className="flex items-start">
+                                    <i className="fa-solid fa-shield-halved mt-1 mr-2 text-amber-600"></i> 
+                                    {t.contact.secretAddress}
+                                </p>
+                            </div>
+                            
+                            <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="w-full block text-center bg-[#25D366] text-white py-4 rounded-lg font-bold text-lg shadow-lg hover:bg-[#128C7E] transition transform hover:-translate-y-0.5 mb-4">
+                                <i className="fa-brands fa-whatsapp mr-2 text-xl"></i> {t.contact.whatsappBtn}
+                            </a>
+                            <p className="text-center text-gray-500 text-xs">We respond within 1 hour during working hours (9 AM - 8 PM IST).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const Footer = ({ t, openLoginModal, isAdmin, logOutAdmin }) => (
+            <footer className="bg-maroon-900 text-maroon-200 py-10 border-t-4 border-gold-500">
+                <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                    <div className="mb-6 md:mb-0 flex flex-col items-center md:items-start">
+                        <div className="flex items-center mb-2">
+                            <div className="w-8 h-8 bg-gold-500 text-maroon-900 rounded-full flex items-center justify-center font-serif text-xl font-bold mr-2">J</div>
+                            <span className="font-serif text-2xl font-bold text-white">{SHOP_NAME}</span>
+                        </div>
+                        <p className="text-sm max-w-xs text-maroon-300">Expert ladies tailoring, custom stitching, and alterations.</p>
+                    </div>
+                    <div className="flex flex-col items-center md:items-end space-y-4">
+                        <div className="flex space-x-4">
+                            <a href="#" className="w-10 h-10 rounded-full bg-maroon-800 flex items-center justify-center hover:bg-gold-500 hover:text-maroon-900 transition"><i className="fa-brands fa-instagram"></i></a>
+                            <a href="#" className="w-10 h-10 rounded-full bg-maroon-800 flex items-center justify-center hover:bg-gold-500 hover:text-maroon-900 transition"><i className="fa-brands fa-facebook-f"></i></a>
+                            <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-maroon-800 flex items-center justify-center hover:bg-[#25D366] hover:text-white transition"><i className="fa-brands fa-whatsapp"></i></a>
+                        </div>
+                        
+                        {/* Hidden bottom owner entry */}
+                        <div className="text-xs text-maroon-400">
+                            {isAdmin ? (
+                                <button onClick={logOutAdmin} className="hover:underline text-red-400"><i className="fa-solid fa-sign-out-alt mr-1"></i> Exit Owner Portal</button>
+                            ) : (
+                                <button onClick={openLoginModal} className="hover:underline hover:text-white"><i className="fa-solid fa-lock mr-1"></i> Owner Portal Access</button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div className="max-w-7xl mx-auto px-4 mt-8 pt-8 border-t border-maroon-800 text-center text-xs text-maroon-400">
+                    &copy; {new Date().getFullYear()} {SHOP_NAME}. {t.footer.rights}
+                </div>
+            </footer>
+        );
+
+        const FloatingWhatsApp = ({ msg }) => (
+            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noreferrer" 
+               className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:bg-[#128C7E] transition transform hover:scale-110 group">
+                <i className="fa-brands fa-whatsapp text-3xl"></i>
+                <span className="absolute right-16 bg-white text-gray-800 text-xs px-3 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap border border-gray-100 pointer-events-none">
+                    Need Help? Chat with us!
+                </span>
+            </a>
+        );
+
+        const App = () => {
+            const [currentView, setView] = useState('home');
+            
+            // Shared State initialized with custom offline values
+            const [orders, setOrders] = useState(initialOrders);
+            const [galleryItems, setGalleryItems] = useState(defaultGallery);
+
+            // Owner Authentication Mode states
+            const [isAdmin, setIsAdmin] = useState(false);
+            const [showLoginModal, setShowLoginModal] = useState(false);
+            const [passcodeInput, setPasscodeInput] = useState('');
+            const [loginError, setLoginError] = useState(false);
+
+            // Initialize database connections safely
+            const [db, setDb] = useState(null);
+            const [user, setUser] = useState(null);
+
+            const t = translations['en'];
+
+            useEffect(() => {
+                if (typeof window.FirebaseSDK === 'undefined') return;
+                const { initializeApp, getFirestore, getAuth, signInAnonymously, signInWithCustomToken, onSnapshot, collection, query } = window.FirebaseSDK;
+                
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                
+                try {
+                    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                        const firebaseConfig = JSON.parse(__firebase_config);
+                        const app = initializeApp(firebaseConfig);
+                        const firestoreDb = getFirestore(app);
+                        const auth = getAuth(app);
+                        setDb(firestoreDb);
+
+                        const initCloudAuth = async () => {
+                            let credential;
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                credential = await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                credential = await signInAnonymously(auth);
+                            }
+                            setUser(credential.user);
+                        };
+
+                        initCloudAuth();
+
+                        // Sync Gallery Collection in real-time
+                        const galleryRef = collection(firestoreDb, 'artifacts', appId, 'public', 'data', 'gallery');
+                        const unsubGallery = onSnapshot(query(galleryRef), (snapshot) => {
+                            const cloudItems = [];
+                            snapshot.forEach(doc => cloudItems.push({ id: doc.id, ...doc.data() }));
+                            if (cloudItems.length > 0) {
+                                setGalleryItems(cloudItems);
+                            }
+                        }, (err) => console.log("Gallery sync failed, fallback active:", err));
+
+                        // Sync Orders Collection in real-time
+                        const ordersRef = collection(firestoreDb, 'artifacts', appId, 'public', 'data', 'orders');
+                        const unsubOrders = onSnapshot(query(ordersRef), (snapshot) => {
+                            const cloudOrders = [];
+                            snapshot.forEach(doc => cloudOrders.push({ id: doc.id, ...doc.data() }));
+                            if (cloudOrders.length > 0) {
+                                setOrders(cloudOrders);
+                            }
+                        }, (err) => console.log("Orders sync failed, fallback active:", err));
+
+                        return () => {
+                            unsubGallery();
+                            unsubOrders();
+                        };
+                    }
+                } catch (e) {
+                    console.warn("Firebase Init bypassed or failed. Staying in local memory mode.", e);
+                }
+            }, []);
+
+            // Handle Owner Actions
+            const handleAdminLogin = (e) => {
+                e.preventDefault();
+                if (passcodeInput === ADMIN_PASSCODE) {
+                    setIsAdmin(true);
+                    setLoginError(false);
+                    setShowLoginModal(false);
+                    setView('admin'); // Instantly go to admin panel on login
+                    setPasscodeInput('');
+                } else {
+                    setLoginError(true);
+                }
+            };
+
+            const logOutAdmin = () => {
+                setIsAdmin(false);
+                setView('home');
+            };
+
+            // Order management modifications
+            const addOrder = async (order) => {
+                const updatedOrders = [order, ...orders];
+                setOrders(updatedOrders);
+
+                if (db && user) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                    try {
+                        const { doc, setDoc } = window.FirebaseSDK;
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', order.id), order);
+                    } catch (e) {
+                        console.error("Cloud save failed:", e);
+                    }
+                }
+            };
+
+            const updateOrderStatus = async (id, newStatus) => {
+                const updated = orders.map(o => o.id === id ? { ...o, status: newStatus } : o);
+                setOrders(updated);
+
+                if (db && user) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                    try {
+                        const { doc, updateDoc } = window.FirebaseSDK;
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', id), { status: newStatus });
+                    } catch (e) {
+                        console.error("Cloud status update failed:", e);
+                    }
+                }
+            };
+
+            const deleteOrder = async (id) => {
+                const updated = orders.filter(o => o.id !== id);
+                setOrders(updated);
+
+                if (db && user) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                    try {
+                        const { doc, deleteDoc } = window.FirebaseSDK;
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', id));
+                    } catch (e) {
+                        console.error("Cloud deletion failed:", e);
+                    }
+                }
+            };
+
+            // Gallery management modifications
+            const addGalleryItem = async (item) => {
+                const updatedGallery = [item, ...galleryItems];
+                setGalleryItems(updatedGallery);
+
+                if (db && user) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                    try {
+                        const { doc, setDoc } = window.FirebaseSDK;
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'gallery', item.id), item);
+                    } catch (e) {
+                        console.error("Cloud gallery save failed:", e);
+                    }
+                }
+            };
+
+            const deleteGalleryItem = async (id) => {
+                const updatedGallery = galleryItems.filter(item => item.id !== id);
+                setGalleryItems(updatedGallery);
+
+                if (db && user) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                    try {
+                        const { doc, deleteDoc } = window.FirebaseSDK;
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'gallery', id));
+                    } catch (e) {
+                        console.error("Cloud gallery deletion failed:", e);
+                    }
+                }
+            };
+
+            // Scroll helper
+            useEffect(() => { window.scrollTo(0, 0); }, [currentView]);
+
+            const renderView = () => {
+                switch(currentView) {
+                    case 'home': return <HomeView t={t} setView={setView} />;
+                    case 'services': return <ServicesView t={t} setView={setView} />;
+                    case 'gallery': return <GalleryView t={t} galleryItems={galleryItems} isAdmin={isAdmin} onDeleteGalleryItem={deleteGalleryItem} />;
+                    case 'order': return <OrderFormView t={t} addOrder={addOrder} />;
+                    case 'contact': return <ContactView t={t} />;
+                    case 'admin': 
+                        return isAdmin ? (
+                            <AdminDashboardView 
+                                t={t} 
+                                orders={orders} 
+                                updateOrderStatus={updateOrderStatus} 
+                                galleryItems={galleryItems} 
+                                onAddGalleryItem={addGalleryItem}
+                                onAddOrder={addOrder}
+                                onDeleteOrder={deleteOrder}
+                            />
+                        ) : (
+                            <HomeView t={t} setView={setView} />
+                        );
+                    default: return <HomeView t={t} setView={setView} />;
+                }
+            };
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    <Navbar 
+                        currentView={currentView} 
+                        setView={setView} 
+                        t={t} 
+                        isAdmin={isAdmin} 
+                        logOutAdmin={logOutAdmin} 
+                        openLoginModal={() => setShowLoginModal(true)} 
+                    />
+                    
+                    <main className="flex-grow">
+                        {renderView()}
+                    </main>
+
+                    <Footer 
+                        t={t} 
+                        openLoginModal={() => setShowLoginModal(true)} 
+                        isAdmin={isAdmin} 
+                        logOutAdmin={logOutAdmin} 
+                    />
+                    
+                    <FloatingWhatsApp msg={t.whatsappFloater.msg} />
+
+                    {/* OWNER ACCESSIBILITY LOGIN MODAL */}
+                    {showLoginModal && (
+                        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 modal-animate">
+                            <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full border-t-8 border-maroon-700">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-serif font-bold text-maroon-800">Owner Access Portal</h3>
+                                    <button onClick={() => { setShowLoginModal(false); setLoginError(false); }} className="text-gray-400 hover:text-gray-600">
+                                        <i className="fa-solid fa-times"></i>
+                                    </button>
+                                </div>
+                                <p className="text-xs text-gray-500 mb-4">Enter your secret owner passcode to modify orders and upload gallery photos.</p>
+                                
+                                <form onSubmit={handleAdminLogin} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Passcode</label>
+                                        <input 
+                                            type="password" 
+                                            value={passcodeInput}
+                                            onChange={(e) => setPasscodeInput(e.target.value)}
+                                            placeholder="Enter Owner Code" 
+                                            className="w-full p-3 border rounded-lg tracking-widest text-center text-lg font-bold"
+                                            required
+                                        />
+                                        {loginError && <p className="text-xs text-red-600 font-semibold mt-2 text-center">Incorrect passcode. Try again.</p>}
+                                        <p className="text-[10px] text-gray-400 mt-2 text-center">Default secret code is: <strong className="text-maroon-700 font-mono">1234</strong></p>
+                                    </div>
+                                    <Button type="submit" className="w-full">Unlock Dashboard</Button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
