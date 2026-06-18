@@ -87,7 +87,6 @@
 
         const SHOP_NAME = "Jyothi Ladies Tailor";
         const WHATSAPP_NUMBER = "919948698878"; // Updated with owner's active WhatsApp number
-        const ADMIN_PASSCODE = "1234"; // Secret owner login passcode
 
         const translations = {
             en: {
@@ -680,17 +679,21 @@
             );
         };
 
-        const AdminDashboardView = ({ t, orders, updateOrderStatus, galleryItems, onAddGalleryItem, onAddOrder, onDeleteOrder }) => {
+        const AdminDashboardView = ({ t, orders, updateOrderStatus, galleryItems, onAddGalleryItem, onAddOrder, onDeleteOrder, adminPasscode, onUpdatePasscode }) => {
             const statusOptions = ['Received', 'Fabric Received', 'Stitching In Progress', 'Ready', 'Shipped'];
 
             // Tab management state for owner quick actions
-            const [activeOwnerTab, setActiveOwnerTab] = useState('manualOrder'); // 'manualOrder' or 'uploadGallery'
+            const [activeOwnerTab, setActiveOwnerTab] = useState('manualOrder'); // 'manualOrder', 'uploadGallery', or 'settings'
             
             // Notification message state (replacing basic alerts)
             const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
             // State to trigger custom order deletion modal instead of standard confirm
             const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, targetId: null, targetType: '' });
+
+            // State for changing passcode
+            const [newPasscode, setNewPasscode] = useState('');
+            const [confirmPasscode, setConfirmPasscode] = useState('');
 
             // State for uploading new design
             const [newDesign, setNewDesign] = useState({
@@ -798,6 +801,22 @@
                 triggerNotification(`Order ${newId} created successfully with specified due date and custom discounts!`);
             };
 
+            const handleUpdatePasscode = (e) => {
+                e.preventDefault();
+                if (newPasscode.length < 4) {
+                    triggerNotification("Secret passcode must be at least 4 characters long.", "error");
+                    return;
+                }
+                if (newPasscode !== confirmPasscode) {
+                    triggerNotification("Confirm passcode does not match!", "error");
+                    return;
+                }
+                onUpdatePasscode(newPasscode);
+                setNewPasscode('');
+                setConfirmPasscode('');
+                triggerNotification("Secret owner passcode updated successfully!");
+            };
+
             // Compute delivery date urgency with clean badges
             const getDueDateBadge = (dueDateStr) => {
                 if (!dueDateStr) return <span className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full font-semibold">No Date Set</span>;
@@ -845,7 +864,7 @@
                             </div>
                         )}
 
-                        {/* Custom Modal Confirmation (Owner Delete/Action safety checks) */}
+                        {/* Custom Modal Confirmation */}
                         {deleteConfirmation.show && (
                             <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 modal-animate">
                                 <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full border-t-8 border-red-600">
@@ -888,34 +907,44 @@
                         {/* Split Interface: Custom Tabs on Left, Manage Orders on Right */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
                             
-                            {/* OWNER GALLERY & MANUAL ORDER FORM CONTAINER (LEFT) */}
+                            {/* OWNER GALLERY, MANUAL ORDER FORM, & PASSCODE SETTINGS CONTAINER (LEFT) */}
                             <div className="bg-white rounded-xl shadow-lg p-6 border border-maroon-50 lg:col-span-5 flex flex-col h-fit">
                                 
                                 {/* Toggle Tabs for Owner Control Panel */}
-                                <div className="flex border-b border-gray-200 mb-6">
+                                <div className="flex border-b border-gray-200 mb-6 flex-wrap">
                                     <button 
                                         onClick={() => setActiveOwnerTab('manualOrder')}
-                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 ${
+                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 min-w-[80px] ${
                                             activeOwnerTab === 'manualOrder' 
                                                 ? 'border-maroon-700 text-maroon-700 font-extrabold' 
                                                 : 'border-transparent text-gray-400 hover:text-gray-600'
                                         }`}
                                     >
-                                        <i className="fa-solid fa-plus-circle mr-1"></i> Add Live Order
+                                        <i className="fa-solid fa-plus-circle mr-1"></i> Live Order
                                     </button>
                                     <button 
                                         onClick={() => setActiveOwnerTab('uploadGallery')}
-                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 ${
+                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 min-w-[80px] ${
                                             activeOwnerTab === 'uploadGallery' 
                                                 ? 'border-maroon-700 text-maroon-700 font-extrabold' 
                                                 : 'border-transparent text-gray-400 hover:text-gray-600'
                                         }`}
                                     >
-                                        <i className="fa-solid fa-cloud-upload mr-1"></i> Upload Gallery
+                                        <i className="fa-solid fa-cloud-upload mr-1"></i> Gallery
+                                    </button>
+                                    <button 
+                                        onClick={() => setActiveOwnerTab('settings')}
+                                        className={`flex-1 pb-3 text-center text-sm font-bold tracking-wide transition-all border-b-2 min-w-[80px] ${
+                                            activeOwnerTab === 'settings' 
+                                                ? 'border-maroon-700 text-maroon-700 font-extrabold' 
+                                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-key mr-1"></i> Passcode
                                     </button>
                                 </div>
 
-                                {activeOwnerTab === 'manualOrder' ? (
+                                {activeOwnerTab === 'manualOrder' && (
                                     <form onSubmit={handleManualOrderSubmit} className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
@@ -1035,7 +1064,9 @@
                                             <i className="fa-solid fa-plus-circle mr-1"></i> Register Walk-In Order
                                         </Button>
                                     </form>
-                                ) : (
+                                )}
+
+                                {activeOwnerTab === 'uploadGallery' && (
                                     <form onSubmit={handleUploadDesign} className="space-y-4">
                                         <div>
                                             <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Select Category</label>
@@ -1091,6 +1122,42 @@
 
                                         <Button type="submit" variant="secondary" className="w-full text-maroon-900 font-bold py-3">
                                             <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Add Design to Gallery
+                                        </Button>
+                                    </form>
+                                )}
+
+                                {activeOwnerTab === 'settings' && (
+                                    <form onSubmit={handleUpdatePasscode} className="space-y-4">
+                                        <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded text-xs text-amber-900 mb-2">
+                                            <p className="flex items-start">
+                                                <i className="fa-solid fa-shield-halved mt-0.5 mr-2 text-amber-600"></i>
+                                                Set a secret passcode that only you know. Web users and customers will not be able to guess it.
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">New Owner Passcode</label>
+                                            <input 
+                                                type="password" 
+                                                value={newPasscode}
+                                                onChange={(e) => setNewPasscode(e.target.value)}
+                                                placeholder="Enter new code"
+                                                className="w-full p-2.5 border rounded-lg tracking-widest font-mono text-center text-lg"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Confirm New Passcode</label>
+                                            <input 
+                                                type="password" 
+                                                value={confirmPasscode}
+                                                onChange={(e) => setConfirmPasscode(e.target.value)}
+                                                placeholder="Confirm new code"
+                                                className="w-full p-2.5 border rounded-lg tracking-widest font-mono text-center text-lg"
+                                                required
+                                            />
+                                        </div>
+                                        <Button type="submit" variant="primary" className="w-full py-3">
+                                            <i className="fa-solid fa-save mr-2"></i> Save Passcode
                                         </Button>
                                     </form>
                                 )}
@@ -1338,6 +1405,11 @@
             const [passcodeInput, setPasscodeInput] = useState('');
             const [loginError, setLoginError] = useState(false);
 
+            // Dynamically initialized passcode state with browser-specific memory fallback
+            const [adminPasscode, setAdminPasscode] = useState(() => {
+                return localStorage.getItem('jyothi_tailor_passcode') || '1234';
+            });
+
             // Initialize database connections safely
             const [db, setDb] = useState(null);
             const [user, setUser] = useState(null);
@@ -1346,7 +1418,7 @@
 
             useEffect(() => {
                 if (typeof window.FirebaseSDK === 'undefined') return;
-                const { initializeApp, getFirestore, getAuth, signInAnonymously, signInWithCustomToken, onSnapshot, collection, query } = window.FirebaseSDK;
+                const { initializeApp, getFirestore, getAuth, signInAnonymously, signInWithCustomToken, onSnapshot, collection, query, doc, getDoc } = window.FirebaseSDK;
                 
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
                 
@@ -1366,6 +1438,14 @@
                                 credential = await signInAnonymously(auth);
                             }
                             setUser(credential.user);
+
+                            // Sync Passcode configurations securely from the backend if available
+                            const configRef = doc(firestoreDb, 'artifacts', appId, 'public', 'data', 'config', 'settings');
+                            const configSnap = await getDoc(configRef);
+                            if (configSnap.exists() && configSnap.data().passcode) {
+                                setAdminPasscode(configSnap.data().passcode);
+                                localStorage.setItem('jyothi_tailor_passcode', configSnap.data().passcode);
+                            }
                         };
 
                         initCloudAuth();
@@ -1403,7 +1483,7 @@
             // Handle Owner Actions
             const handleAdminLogin = (e) => {
                 e.preventDefault();
-                if (passcodeInput === ADMIN_PASSCODE) {
+                if (passcodeInput === adminPasscode) {
                     setIsAdmin(true);
                     setLoginError(false);
                     setShowLoginModal(false);
@@ -1417,6 +1497,22 @@
             const logOutAdmin = () => {
                 setIsAdmin(false);
                 setView('home');
+            };
+
+            // Custom secure Passcode setting update logic
+            const updateAdminPasscode = async (newCode) => {
+                setAdminPasscode(newCode);
+                localStorage.setItem('jyothi_tailor_passcode', newCode);
+
+                if (db && user) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-ladies-tailor';
+                    try {
+                        const { doc, setDoc } = window.FirebaseSDK;
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'settings'), { passcode: newCode }, { merge: true });
+                    } catch (e) {
+                        console.error("Cloud config save failed:", e);
+                    }
+                }
             };
 
             // Order management modifications
@@ -1516,6 +1612,8 @@
                                 onAddGalleryItem={addGalleryItem}
                                 onAddOrder={addOrder}
                                 onDeleteOrder={deleteOrder}
+                                adminPasscode={adminPasscode}
+                                onUpdatePasscode={updateAdminPasscode}
                             />
                         ) : (
                             <HomeView t={t} setView={setView} />
@@ -1572,7 +1670,6 @@
                                             required
                                         />
                                         {loginError && <p className="text-xs text-red-600 font-semibold mt-2 text-center">Incorrect passcode. Try again.</p>}
-                                        <p className="text-[10px] text-gray-400 mt-2 text-center">Default secret code is: <strong className="text-maroon-700 font-mono">1234</strong></p>
                                     </div>
                                     <Button type="submit" className="w-full">Unlock Dashboard</Button>
                                 </form>
