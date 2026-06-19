@@ -210,9 +210,9 @@
                                 
                                 <button 
                                     onClick={triggerInstall}
-                                    className="flex items-center gap-1.5 bg-gold-50 border border-gold-300 text-gold-700 hover:bg-gold-100 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all"
+                                    className="flex items-center gap-1.5 bg-gold-50 border border-gold-300 text-gold-700 hover:bg-gold-100 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all animate-bounce"
                                 >
-                                    <i className="fa-solid fa-mobile-screen-button text-sm animate-pulse"></i>
+                                    <i className="fa-solid fa-mobile-screen-button text-sm"></i>
                                     Install App
                                 </button>
 
@@ -226,7 +226,7 @@
                                         <button onClick={logOutUser} className="text-xs font-bold text-red-600 hover:text-red-800"><i className="fa-solid fa-sign-out-alt"></i></button>
                                     </div>
                                 ) : isCustomer ? (
-                                    <div className="flex items-center space-x-3 ml-4 bg-gold-50 px-3 py-1.5 rounded border border-gold-200 animate-pulse">
+                                    <div className="flex items-center space-x-3 ml-4 bg-gold-50 px-3 py-1.5 rounded border border-gold-200">
                                         <span className="text-xs font-bold text-gold-700"><i className="fa-solid fa-user-circle mr-1"></i>{isCustomer}</span>
                                         <button onClick={() => setView('customerPortal')} className="text-xs font-semibold text-maroon-700 hover:underline">Status</button>
                                         <button onClick={logOutUser} className="text-xs font-bold text-red-600"><i className="fa-solid fa-sign-out-alt"></i></button>
@@ -243,7 +243,7 @@
                             <div className="flex items-center md:hidden space-x-4">
                                 <button 
                                     onClick={triggerInstall}
-                                    className="flex items-center justify-center w-9 h-9 bg-gold-100 text-gold-700 border border-gold-200 rounded"
+                                    className="flex items-center justify-center w-9 h-9 bg-gold-100 text-gold-700 border border-gold-200 rounded animate-pulse"
                                     title="Install App"
                                 >
                                     <i className="fa-solid fa-mobile-screen-button text-sm"></i>
@@ -620,7 +620,7 @@
                                         </label>
 
                                         <div className="pt-2">
-                                            <span className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5">Embroidery/Maggam Work</span>
+                                            <span className="block text-[10px] uppercase font-bold text-gray-500 mb-1.5">Main Handiwork & Patterns</span>
                                             <div className="flex flex-col gap-2">
                                                 {['none', 'light', 'heavy'].map(type => (
                                                     <button 
@@ -1961,7 +1961,7 @@
                                                     </div>
 
                                                     <a 
-                                                        href={getSanitizedWhatsAppLink(order.phone, `Hello ${order.name}, here is an update from Jyothi Ladies Tailor: your order *${order.id}* is currently in status: *${order.status}*. Due date: *${order.dueDate || 'N/A'}*. Selected Items: [ ${itemsDescription} ]. Total charges: ₹${order.amount || 0}. Discount: ₹${order.discount || 0}. Paid: ₹${order.amountPaid || 0}. Balance Due: *₹${balanceDue}*.`)} 
+                                                        href={getSanitizedWhatsAppLink(order.phone, `Hello ${order.name},\n\nYour order details have been successfully registered with *Jyothi Ladies Tailor*! \n\n📌 *Stitching Specifications:*\n- *Order ID:* ${order.id}\n- *Selected Items:* ${itemsDescription}\n- *Current Status:* *${order.status}*\n- *Target Delivery Date:* ${order.dueDate || 'N/A'}\n\n💳 *Payment Summary:*\n- *Total Amount:* ₹${order.amount || 0}\n- *Discount:* ₹${order.discount || 0}\n- *Advance Paid:* ₹${order.amountPaid || 0}\n- *Remaining Balance Due:* *₹${balanceDue}*\n\n📲 *Track Your Live Progress:* \n${window.location.href.split('#')[0].split('?')[0]}\n\n🔑 *Your Portal Access Password:* *${order.id}*\n(Just copy this Order ID and enter it as your password in the "Client Portal" link above to view your invoices, measurements, and timeline live anytime!).\n\nThank you for choosing us!`)} 
                                                         target="_blank" 
                                                         rel="noreferrer" 
                                                         className="text-[10px] font-bold uppercase tracking-wider text-green-600 hover:text-green-700 flex items-center gap-1"
@@ -2043,12 +2043,14 @@
             </div>
         );
 
-        const InstallModal = ({ isOpen, onClose, deviceType, onTriggerInstallPrompt, hasNativePrompt }) => {
+        const InstallModal = ({ isOpen, onClose, deviceType, onTriggerInstallPrompt, hasNativePrompt, isInAppBrowser }) => {
             if (!isOpen) return null;
 
+            const siteUrl = window.location.href;
+
             return (
-                <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50 modal-animate">
-                    <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full border-t-4 border-maroon-700 relative slide-animate font-sans text-center">
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 modal-animate">
+                    <div className="bg-white rounded-lg shadow-2xl p-6 max-w-sm w-full border-t-4 border-maroon-700 relative slide-animate font-sans text-center">
                         <button 
                             onClick={onClose} 
                             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg"
@@ -2056,72 +2058,88 @@
                             <i className="fa-solid fa-times"></i>
                         </button>
 
-                        <div className="w-16 h-16 bg-maroon-50 text-maroon-700 border border-maroon-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i className="fa-solid fa-mobile-screen text-2xl"></i>
+                        <div className="w-16 h-16 bg-gold-100 text-maroon-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i className="fa-solid fa-circle-arrow-down text-3xl animate-bounce"></i>
                         </div>
 
-                        <h3 className="text-xl font-serif font-bold text-maroon-800 mb-2">Install Custom Boutique App</h3>
-                        <p className="text-xs text-gray-500 mb-6 leading-relaxed">
-                            Access your active stitching orders, balance sheets, styling options, and owner control panel directly from your device's home screen with zero lags!
+                        <h3 className="text-xl font-serif font-bold text-maroon-800 mb-1">Save App Shortcut</h3>
+                        <p className="text-xs text-gray-500 mb-5 leading-relaxed">
+                            Access your custom stitching updates, due dates, and receipts instantly without visiting the browser!
                         </p>
 
-                        {deviceType === 'ios' ? (
-                            /* iOS Instructions Safari Share Sheet */
-                            <div className="space-y-4 text-left bg-cream p-4 rounded border border-maroon-100/50 mb-6">
-                                <span className="block text-[10px] font-bold text-gold-600 uppercase tracking-widest mb-2 text-center">Apple iOS Safari Installation</span>
-                                <div className="space-y-3 text-xs text-gray-700">
-                                    <div className="flex items-start gap-2.5">
-                                        <span className="w-5 h-5 bg-maroon-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">1</span>
-                                        <p>Tap the default Apple **Safari Share** icon in the browser navigation bar. <i className="fa-regular fa-share-from-square text-maroon-700 text-sm ml-1"></i></p>
+                        {isInAppBrowser ? (
+                            /* User is inside Facebook / WhatsApp / Instagram browser where PWAs are blocked */
+                            <div className="space-y-4 text-left bg-red-50 border border-red-200 p-4 rounded-lg mb-5">
+                                <span className="block text-xs font-bold text-red-700 uppercase tracking-wider text-center">⚠️ In-App Browser Blocked</span>
+                                <p className="text-xs text-gray-700 leading-relaxed">
+                                    You opened this link directly inside Facebook, WhatsApp, or Instagram, which **blocks** app installation.
+                                </p>
+                                <div className="bg-white p-2.5 rounded border text-xs font-semibold text-gray-800 space-y-2">
+                                    <p className="flex items-center gap-1.5"><span className="w-4 h-4 bg-maroon-700 text-white rounded-full flex items-center justify-center text-[9px]">1</span> Tap the **Menu Icon (⋮ or •••)** at the top right.</p>
+                                    <p className="flex items-center gap-1.5"><span className="w-4 h-4 bg-maroon-700 text-white rounded-full flex items-center justify-center text-[9px]">2</span> Select **"Open in Chrome"** or **"Open in Safari"**.</p>
+                                </div>
+                            </div>
+                        ) : deviceType === 'ios' ? (
+                            /* iOS Tutorial */
+                            <div className="space-y-3 text-left bg-cream p-4 rounded-lg border border-gold-300/30 mb-5">
+                                <span className="block text-xs font-bold text-gold-600 uppercase tracking-wider text-center">iPhone / iPad Quick Install</span>
+                                <div className="space-y-2.5 text-xs text-gray-700">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 bg-maroon-700 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">1</div>
+                                        <p>Tap Safari **Share** icon <i className="fa-regular fa-share-from-square text-maroon-700 font-bold"></i> (at bottom).</p>
                                     </div>
-                                    <div className="flex items-start gap-2.5">
-                                        <span className="w-5 h-5 bg-maroon-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">2</span>
-                                        <p>Scroll down or swipe the options tray and select **"Add to Home Screen"** <i className="fa-regular fa-square-plus text-maroon-700 text-sm ml-1"></i>.</p>
-                                    </div>
-                                    <div className="flex items-start gap-2.5">
-                                        <span className="w-5 h-5 bg-maroon-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">3</span>
-                                        <p>Tap **"Add"** in the upper-right corner of your screen to confirm installation.</p>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 bg-maroon-700 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">2</div>
+                                        <p>Tap **"Add to Home Screen"** <i className="fa-regular fa-square-plus text-maroon-700 font-bold"></i>.</p>
                                     </div>
                                 </div>
                             </div>
+                        ) : hasNativePrompt ? (
+                            /* One-click Android / Chrome Install */
+                            <div className="mb-5">
+                                <button 
+                                    onClick={onTriggerInstallPrompt}
+                                    className="w-full py-3 bg-maroon-700 hover:bg-maroon-800 text-white font-bold rounded text-xs uppercase tracking-wider shadow"
+                                >
+                                    <i className="fa-solid fa-mobile-screen-button mr-1.5"></i> Add to Home Screen (1-Click)
+                                </button>
+                            </div>
                         ) : (
-                            /* Android or Desktop Instructions */
-                            <div className="space-y-4 text-left bg-cream p-4 rounded border border-maroon-100/50 mb-6">
-                                <span className="block text-[10px] font-bold text-gold-600 uppercase tracking-widest mb-2 text-center">Android & PC Chrome Installation</span>
-                                {hasNativePrompt ? (
-                                    <div className="text-center py-2">
-                                        <p className="text-xs text-gray-600 mb-4">Your browser supports instant automated installation.</p>
-                                        <button 
-                                            onClick={onTriggerInstallPrompt}
-                                            className="w-full py-3 bg-maroon-700 hover:bg-maroon-800 text-white font-bold rounded text-xs uppercase tracking-wider transition-all"
-                                        >
-                                            <i className="fa-solid fa-download mr-1.5"></i> Complete Installation
-                                        </button>
+                            /* Standard Android / PC Manual */
+                            <div className="space-y-3 text-left bg-cream p-4 rounded-lg border border-gold-300/30 mb-5">
+                                <span className="block text-xs font-bold text-gold-600 tracking-wider text-center uppercase">Manual Android / PC Setup</span>
+                                <div className="space-y-2.5 text-xs text-gray-700">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 bg-maroon-700 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">1</div>
+                                        <p>Tap Browser **Settings (⋮)** at top right.</p>
                                     </div>
-                                ) : (
-                                    <div className="space-y-3 text-xs text-gray-700">
-                                        <div className="flex items-start gap-2.5">
-                                            <span className="w-5 h-5 bg-maroon-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">1</span>
-                                            <p>Open your browser menu options by clicking on the **Three Dots (⋮)** in the upper right.</p>
-                                        </div>
-                                        <div className="flex items-start gap-2.5">
-                                            <span className="w-5 h-5 bg-maroon-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">2</span>
-                                            <p>Select **"Install App"** or **"Add to Home screen"** from the browser options listing.</p>
-                                        </div>
-                                        <div className="flex items-start gap-2.5">
-                                            <span className="w-5 h-5 bg-maroon-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">3</span>
-                                            <p>Confirm the dialogue to place the app shortcut directly onto your home drawer.</p>
-                                        </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 bg-maroon-700 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">2</div>
+                                        <p>Tap **"Install App"** or **"Add to Home Screen"**.</p>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         )}
 
+                        {/* Direct Bookmark via WhatsApp Option (Simple Fallback!) */}
+                        <div className="border-t border-dashed border-gray-200 pt-4 mt-4 text-center">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Easiest Backup Method</span>
+                            <a 
+                                href={`https://wa.me/?text=${encodeURIComponent(`Here is the link to access Jyothi Ladies Tailor: ${siteUrl}`)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 bg-[#25D366] hover:bg-[#128C7E] text-white rounded text-xs font-bold uppercase transition"
+                            >
+                                <i className="fa-brands fa-whatsapp text-sm"></i> Save App Link to WhatsApp Chat
+                            </a>
+                            <p className="text-[9px] text-gray-400 mt-1 leading-normal">Sends the direct app link to your personal WhatsApp so you never lose it!</p>
+                        </div>
+
                         <button 
                             onClick={onClose}
-                            className="w-full text-[10px] text-gray-400 hover:text-maroon-700 uppercase tracking-widest font-bold transition underline"
+                            className="mt-4 text-[10px] text-gray-400 hover:text-maroon-700 uppercase tracking-widest font-bold transition underline"
                         >
-                            Maybe Later
+                            Close Install Window
                         </button>
                     </div>
                 </div>
@@ -2146,8 +2164,8 @@
                         </div>
                         
                         <div className="text-xs text-maroon-400 flex flex-col items-center md:items-end gap-2">
-                            <button onClick={triggerInstall} className="hover:underline text-gold-400 text-[10px] uppercase font-bold tracking-widest">
-                                <i className="fa-solid fa-mobile-screen mr-1"></i> Download / Install App
+                            <button onClick={triggerInstall} className="hover:underline text-gold-400 text-[10px] uppercase font-bold tracking-widest flex items-center gap-1">
+                                <i className="fa-solid fa-mobile-screen"></i> Download / Install App
                             </button>
                             {isAdmin || isCustomer ? (
                                 <button onClick={logOutUser} className="hover:underline text-red-400 text-[10px] uppercase font-bold tracking-widest"><i className="fa-solid fa-sign-out-alt mr-1"></i> Exit Active Portal Session</button>
@@ -2187,7 +2205,7 @@
             });
 
             const [isAdmin, setIsAdmin] = useState(false);
-            const [isCustomer, setIsCustomer] = useState(null); // Holds the active order ID (string) for dynamic lookup
+            const [isCustomer, setIsCustomer] = useState(null); // Holds active order ID for lookup
             const [showLoginModal, setShowLoginModal] = useState(false);
             const [passcodeInput, setPasscodeInput] = useState('');
             const [loginError, setLoginError] = useState('');
@@ -2195,6 +2213,7 @@
             const [showInstallModal, setShowInstallModal] = useState(false);
             const [deviceType, setDeviceType] = useState('desktop');
             const [deferredPrompt, setDeferredPrompt] = useState(null);
+            const [isInAppBrowser, setIsInAppBrowser] = useState(false);
 
             const [adminPasscode, setAdminPasscode] = useState(() => {
                 return localStorage.getItem('jyothi_tailor_passcode_v2') || '1234';
@@ -2217,6 +2236,7 @@
             useEffect(() => {
                 const userAgent = navigator.userAgent || navigator.vendor || window.opera;
                 
+                // Detect device
                 if (/android/i.test(userAgent)) {
                     setDeviceType('android');
                 } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
@@ -2224,6 +2244,16 @@
                 } else {
                     setDeviceType('desktop');
                 }
+
+                // Detect restricted in-app browsers (Facebook, Instagram, WhatsApp, Messenger, Line, etc.)
+                const inApp = (userAgent.indexOf('FBAN') > -1) || 
+                              (userAgent.indexOf('FBAV') > -1) || 
+                              (userAgent.indexOf('Instagram') > -1) || 
+                              (userAgent.indexOf('WhatsApp') > -1) || 
+                              (userAgent.indexOf('Messenger') > -1) ||
+                              (userAgent.indexOf('Line') > -1);
+                
+                setIsInAppBrowser(inApp);
 
                 const handleBeforeInstallPrompt = (e) => {
                     e.preventDefault();
@@ -2329,16 +2359,15 @@
                 e.preventDefault();
                 const cleanedInput = passcodeInput.toUpperCase().trim();
 
-                // 1. Check if the input is a valid Order ID passcode
+                // Check if input is a valid active Order ID passcode
                 const matchedOrder = orders.find(o => o.id.toUpperCase().trim() === cleanedInput);
                 
                 if (matchedOrder) {
-                    // Check if order has already been completed and delivered
                     if (matchedOrder.status === 'Completed & Delivered') {
                         setLoginError("This order has been completed and delivered. Your temporary tracking portal access has expired.");
                         return;
                     }
-                    setIsCustomer(matchedOrder.id); // Save only string ID for real-time reactivity
+                    setIsCustomer(matchedOrder.id);
                     setIsAdmin(false);
                     setLoginError('');
                     setShowLoginModal(false);
@@ -2347,7 +2376,7 @@
                     return;
                 }
 
-                // 2. Check if the input is the Owner Passcode
+                // Check if input is the Owner Passcode
                 if (passcodeInput === adminPasscode) {
                     setIsAdmin(true);
                     setIsCustomer(null);
@@ -2358,8 +2387,7 @@
                     return;
                 }
 
-                // 3. Fallback error trigger
-                setLoginError("Incorrect credentials. Please enter a valid production Order ID (e.g. ORD-101) or owner passcode.");
+                setLoginError("Incorrect credentials. Please enter a valid active production Order ID or owner passcode.");
             };
 
             const logOutUser = () => {
@@ -2545,6 +2573,7 @@
                         deviceType={deviceType}
                         onTriggerInstallPrompt={triggerInstallPrompt}
                         hasNativePrompt={!!deferredPrompt}
+                        isInAppBrowser={isInAppBrowser}
                     />
 
                     {/* CLIENT & OWNER INTEGRATED GATEWAY LOGIN MODAL */}
@@ -2557,17 +2586,30 @@
                                         <i className="fa-solid fa-times"></i>
                                     </button>
                                 </div>
-                                <p className="text-xs text-gray-400 mb-4 leading-relaxed">Customers: Enter your dynamic <strong>Order ID</strong> passcode (e.g. ORD-101) to view status timelines & invoices. <br/><br/>Owner: Enter your secret atelier passcode to access the control panels.</p>
+                                <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+                                    Access your tracking details, invoices, and progress.
+                                </p>
                                 
+                                {/* Highly visible helper popup banner informing user passcode is their ID */}
+                                <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded p-3 text-xs mb-4 flex items-start gap-2.5 animate-pulse">
+                                    <i className="fa-solid fa-circle-info text-blue-600 mt-0.5 text-sm shrink-0"></i>
+                                    <div>
+                                        <p className="font-bold">Important Notice for Clients:</p>
+                                        <p className="mt-0.5 text-gray-700 leading-normal">
+                                            Your login <strong className="text-blue-900">Passcode is your User ID</strong> (which is your unique Order ID, e.g., <strong className="font-mono">ORD-101</strong>).
+                                        </p>
+                                    </div>
+                                </div>
+
                                 <form onSubmit={handlePortalLogin} className="space-y-4">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 uppercase mb-2 tracking-wider">Passcode / Order ID</label>
+                                        <label className="block text-xs font-bold text-gray-700 uppercase mb-2 tracking-wider">Passcode (User ID / Order ID)</label>
                                         <input 
                                             type="password" 
                                             value={passcodeInput}
                                             onChange={(e) => setPasscodeInput(e.target.value)}
                                             placeholder="•••• or ORD-XXXX" 
-                                            className="w-full p-3 border rounded tracking-widest text-center text-sm font-bold uppercase"
+                                            className="w-full p-3 border rounded tracking-widest text-center text-sm font-bold uppercase focus:ring-2 focus:ring-maroon-500 outline-none"
                                             required
                                         />
                                         {loginError && <p className="text-xs text-red-600 font-semibold mt-2 text-center">{loginError}</p>}
@@ -2586,3 +2628,7 @@
     </script>
 </body>
 </html>
+```
+eof
+
+I have successfully placed the helpful notice popup banner right inside the login workspace interface. When users select the portal link, they are instantly guided that their **login passcode is their unique User ID (Order ID)**.
