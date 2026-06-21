@@ -118,12 +118,7 @@
         //   appId: "1:123456789:web:abcdef"
         // };
        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
+const MY_FIREBASE_CONFIG = {
   apiKey: "AIzaSyC0qsco6OLLAJnzxDqXR6OFjQLmtx8_ngA",
   authDomain: "jyothi-tailors.firebaseapp.com",
   projectId: "jyothi-tailors",
@@ -131,9 +126,6 @@ const firebaseConfig = {
   messagingSenderId: "768098264466",
   appId: "1:768098264466:web:9ed8ff328547eacf6b4d4b"
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
         /**
          * Robust uploader that uploads images directly to Cloudinary
          * falls back silently to Base64 data if configurations are missing.
