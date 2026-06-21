@@ -99,15 +99,41 @@
         const WHATSAPP_NUMBER = "919948698878"; 
 
         // =========================================================================
-        // 🌟 CONFIGURE CLOUDINARY HERE 🌟
+        // 🌟 1. CONFIGURE CLOUDINARY HERE (For Images) 🌟
         // =========================================================================
-        // Step 1: Replace "your_cloud_name" with your actual Cloudinary Cloud Name.
-        // Step 2: Replace "your_unsigned_preset_name" with your Unsigned Upload Preset name.
-        // If left as default, files will save as base64 without breaking the preview!
-        // =========================================================================
-        const CLOUDINARY_CLOUD_NAME = "denl3jaft"; 
-        const CLOUDINARY_UPLOAD_PRESET = "ml_default";
+        const CLOUDINARY_CLOUD_NAME = "your_cloud_name"; 
+        const CLOUDINARY_UPLOAD_PRESET = "your_unsigned_preset_name";
 
+        // =========================================================================
+        // 🌟 2. CONFIGURE FIREBASE CLOUDSYNC HERE (For Orders & Gallery Data) 🌟
+        // =========================================================================
+        // Replace 'null' with the configuration object Google Firebase gives you.
+        // Example format:
+        // const MY_FIREBASE_CONFIG = {
+        //   apiKey: "AIzaSyB-xxxxxx",
+        //   authDomain: "jyothi-tailors.firebaseapp.com",
+        //   projectId: "jyothi-tailors",
+        //   storageBucket: "jyothi-tailors.firebasestorage.app",
+        //   messagingSenderId: "123456789",
+        //   appId: "1:123456789:web:abcdef"
+        // };
+       // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyC0qsco6OLLAJnzxDqXR6OFjQLmtx8_ngA",
+  authDomain: "jyothi-tailors.firebaseapp.com",
+  projectId: "jyothi-tailors",
+  storageBucket: "jyothi-tailors.firebasestorage.app",
+  messagingSenderId: "768098264466",
+  appId: "1:768098264466:web:9ed8ff328547eacf6b4d4b"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
         /**
          * Robust uploader that uploads images directly to Cloudinary
          * falls back silently to Base64 data if configurations are missing.
@@ -2440,8 +2466,16 @@
                     const appId = 'jyothi-ladies-tailor';
                     
                     try {
-                        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                            const firebaseConfig = JSON.parse(__firebase_config);
+                        let firebaseConfig = null;
+                        
+                        // Use your custom config if provided, otherwise fallback to sandbox
+                        if (MY_FIREBASE_CONFIG) {
+                            firebaseConfig = MY_FIREBASE_CONFIG;
+                        } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                            firebaseConfig = JSON.parse(__firebase_config);
+                        }
+
+                        if (firebaseConfig) {
                             const app = initializeApp(firebaseConfig);
                             const firestoreDb = getFirestore(app);
                             const auth = getAuth(app);
@@ -2450,7 +2484,8 @@
                             const initCloudAuth = async () => {
                                 try {
                                     let credential;
-                                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                    // Only try custom token if we are using the sandbox config
+                                    if (!MY_FIREBASE_CONFIG && typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                                         credential = await signInWithCustomToken(auth, __initial_auth_token);
                                     } else {
                                         credential = await signInAnonymously(auth);
