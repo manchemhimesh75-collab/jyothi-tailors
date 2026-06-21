@@ -1,42 +1,89 @@
-<!-- ... existing code ... -->
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-            import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-            import { getFirestore, collection, onSnapshot, query, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jyothi Ladies Tailor | Premium Boutique</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        maroon: {
+                            50: '#fdf8f8', 100: '#f9ecec', 200: '#f0d4d4', 500: '#a32a2a',
+                            600: '#8c2020', 700: '#731717', 800: '#5c1414', 900: '#4d1414',
+                        },
+                        gold: { 400: '#d4af37', 500: '#aa8c2c', }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            -webkit-font-smoothing: antialiased; 
+            background-color: #fcfbfb; 
+        }
+        .lux-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08); }
+        
+        /* Touch friendly scrollbar for mobile */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+    </style>
 
-            // Expose Firebase tools to the global window object so React can use them safely
-            window.FirebaseTools = {
-                initializeApp, getAuth, signInAnonymously, signInWithCustomToken, getFirestore, collection, onSnapshot, query, addDoc
-            };
-        </script>
-    </head>
-<!-- ... existing code ... -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Expose Firebase tools to the global window object so React can use them safely
+        window.FirebaseTools = {
+            initializeApp, getAuth, signInAnonymously, getFirestore, collection, onSnapshot, query, addDoc, doc, updateDoc
+        };
+    </script>
+</head>
+<body class="text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel" data-presets="react">
+        /** @jsx React.createElement */
+        /** @jsxFrag React.Fragment */
+        
+        const { useState, useEffect } = React;
+
+        // Your exact Firebase Project Configuration
+        const MY_FIREBASE_CONFIG = {
+          apiKey: "AIzaSyC0qsco6OLLAJnzxDqXR6OFjQLmtx8_ngA",
+          authDomain: "jyothi-tailors.firebaseapp.com",
+          projectId: "jyothi-tailors",
+          storageBucket: "jyothi-tailors.firebasestorage.app",
+          messagingSenderId: "768098264466",
+          appId: "1:768098264466:web:9ed8ff328547eacf6b4d4b"
+        };
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('home');
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+            const [db, setDb] = useState(null);
+            const [cloudStatus, setCloudStatus] = useState('connecting');
             const [orders, setOrders] = useState([]);
             const [msgBox, setMsgBox] = useState(null);
 
             const showMessage = (title, text, type="info") => {
                 setMsgBox({ title, text, type });
-            };
-
-            const addOrderToSystem = async (orderData) => {
-                // Instantly update UI (Optimistic update)
-                setOrders(prev => [{ id: Date.now().toString(), ...orderData }, ...prev]);
-
-                if (db) {
-                    try {
-                        const { collection, addDoc } = window.FirebaseTools;
-                        const isCanvas = typeof window.__firebase_config !== 'undefined';
-                        const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'local-jyothi';
-                        const collectionPath = isCanvas 
-                            ? collection(db, 'artifacts', appId, 'public', 'data', 'orders') 
-                            : collection(db, 'public_orders');
-                        
-                        await addDoc(collectionPath, orderData);
-                    } catch (err) {
-                        console.error("Cloud save failed:", err);
-                        showMessage("Warning", "Order saved locally, but cloud sync failed: " + err.message);
-                    }
-                }
             };
 
             useEffect(() => {
@@ -47,42 +94,26 @@
                             return;
                         }
                         
-                        const { initializeApp, getFirestore, getAuth, signInAnonymously, signInWithCustomToken, collection, onSnapshot, query } = window.FirebaseTools;
+                        const { initializeApp, getFirestore, getAuth, signInAnonymously, collection, onSnapshot, query } = window.FirebaseTools;
                         
-                        const isCanvas = typeof window.__firebase_config !== 'undefined';
-                        const configToUse = isCanvas ? JSON.parse(window.__firebase_config) : MY_FIREBASE_CONFIG;
-                        const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'local-jyothi';
-
-                        const app = initializeApp(configToUse);
+                        const app = initializeApp(MY_FIREBASE_CONFIG);
                         const firestore = getFirestore(app);
                         const auth = getAuth(app);
 
-                        if (isCanvas && typeof window.__initial_auth_token !== 'undefined') {
-                            await signInWithCustomToken(auth, window.__initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                        
+                        await signInAnonymously(auth);
                         setDb(firestore);
                         setCloudStatus('connected');
 
-                        // Listen for Live Orders
-                        const collectionPath = isCanvas 
-                            ? collection(firestore, 'artifacts', appId, 'public', 'data', 'orders') 
-                            : collection(firestore, 'public_orders');
-
-                        const q = query(collectionPath);
+                        // Listen for Live Orders in real-time
+                        const q = query(collection(firestore, 'public_orders'));
                         onSnapshot(q, (snapshot) => {
                             const loadedOrders = [];
                             snapshot.forEach((doc) => {
                                 loadedOrders.push({ id: doc.id, ...doc.data() });
                             });
-                            // Sort so newest orders are on top
-                            loadedOrders.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                            // Sort so newest are on top
+                            loadedOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
                             setOrders(loadedOrders);
-                        }, (error) => {
-                            console.warn("Firestore read error (likely missing rules):", error);
-                            setCloudStatus('local-only (missing DB rules)');
                         });
                     } catch (err) {
                         console.error("Firebase connection failed:", err);
@@ -93,41 +124,349 @@
                 connectCloud();
             }, []);
 
+            const handleTabSwitch = (tab) => {
+                setActiveTab(tab);
+                setIsMobileMenuOpen(false); // Close mobile menu when a tab is clicked
+            };
+
             return (
-<!-- ... existing code ... -->
-                    <main className="flex-grow">
+                <div className="min-h-screen flex flex-col font-sans bg-gray-50">
+                    {/* Header - Mobile Responsive */}
+                    <header className="bg-white sticky top-0 z-50 lux-shadow">
+                        <div className="max-w-7xl mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
+                            {/* Logo */}
+                            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => handleTabSwitch('home')}>
+                                <div className="w-10 h-10 md:w-12 md:h-12 bg-maroon-600 text-gold-400 rounded-full flex items-center justify-center text-xl shadow-md">
+                                    <i className="fa-solid fa-scissors"></i>
+                                </div>
+                                <div>
+                                    <h1 className="font-serif text-lg md:text-2xl font-bold text-maroon-900 leading-tight">Jyothi</h1>
+                                    <p className="text-[10px] md:text-xs tracking-widest text-gray-500 uppercase">Ladies Tailor</p>
+                                </div>
+                            </div>
+
+                            {/* Desktop Nav */}
+                            <nav className="hidden md:flex space-x-6 items-center">
+                                <button onClick={() => handleTabSwitch('home')} className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors ${activeTab === 'home' ? 'text-maroon-700 bg-maroon-50' : 'text-gray-600 hover:bg-gray-100'}`}>Home</button>
+                                <button onClick={() => handleTabSwitch('track')} className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors ${activeTab === 'track' ? 'text-maroon-700 bg-maroon-50' : 'text-gray-600 hover:bg-gray-100'}`}>Track Order</button>
+                                <button onClick={() => handleTabSwitch('owner')} className="bg-maroon-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-maroon-800 transition-colors shadow-md">
+                                    <i className="fa-solid fa-crown mr-2 text-gold-400"></i> Owner Login
+                                </button>
+                            </nav>
+
+                            {/* Mobile Hamburger Button */}
+                            <button 
+                                className="md:hidden text-maroon-900 text-2xl p-2 focus:outline-none"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                <i className={`fa-solid ${isMobileMenuOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
+                            </button>
+                        </div>
+
+                        {/* Mobile Dropdown Menu */}
+                        {isMobileMenuOpen && (
+                            <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+                                <div className="flex flex-col px-4 py-3 space-y-2">
+                                    <button onClick={() => handleTabSwitch('home')} className={`text-left text-base font-medium p-3 rounded-xl ${activeTab === 'home' ? 'text-maroon-700 bg-maroon-50' : 'text-gray-700 hover:bg-gray-50'}`}><i className="fa-solid fa-house w-6 text-center mr-2"></i> Home</button>
+                                    <button onClick={() => handleTabSwitch('track')} className={`text-left text-base font-medium p-3 rounded-xl ${activeTab === 'track' ? 'text-maroon-700 bg-maroon-50' : 'text-gray-700 hover:bg-gray-50'}`}><i className="fa-solid fa-magnifying-glass w-6 text-center mr-2"></i> Track Order</button>
+                                    <button onClick={() => handleTabSwitch('owner')} className={`text-left text-base font-medium p-3 rounded-xl ${activeTab === 'owner' ? 'text-maroon-700 bg-maroon-50' : 'text-gray-700 hover:bg-gray-50'}`}><i className="fa-solid fa-crown w-6 text-center mr-2"></i> Owner Dashboard</button>
+                                </div>
+                            </div>
+                        )}
+                    </header>
+
+                    <main className="flex-grow w-full max-w-7xl mx-auto">
                         {activeTab === 'home' && <HomeTab setActiveTab={setActiveTab} />}
                         {activeTab === 'track' && <TrackTab orders={orders} />}
-                        {activeTab === 'owner' && <OwnerTab cloudStatus={cloudStatus} orders={orders} showMessage={showMessage} addOrderToSystem={addOrderToSystem} />}
+                        {activeTab === 'owner' && <OwnerTab db={db} cloudStatus={cloudStatus} orders={orders} showMessage={showMessage} setOrders={setOrders} />}
                     </main>
 
+                    {/* Pop-up Messages */}
                     {msgBox && (
-<!-- ... existing code ... -->
-        function TrackTab({ orders }) {
-<!-- ... existing code ... -->
+                        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl p-6 md:p-8 max-w-sm w-full lux-shadow text-center animate-in zoom-in duration-200">
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${msgBox.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                    <i className={`text-3xl fa-solid ${msgBox.type === 'error' ? 'fa-triangle-exclamation' : 'fa-check'}`}></i>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">{msgBox.title}</h3>
+                                <p className="text-gray-600 mb-6">{msgBox.text}</p>
+                                <button onClick={() => setMsgBox(null)} className="w-full bg-gray-900 text-white py-3.5 rounded-xl font-medium active:scale-95 transition-transform">Close</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             );
         }
 
-        function OwnerTab({ cloudStatus, orders, showMessage, addOrderToSystem }) {
+        function HomeTab({ setActiveTab }) {
+            return (
+                <div className="space-y-8 pb-12">
+                    {/* Hero Section */}
+                    <section className="bg-gradient-to-br from-maroon-900 to-maroon-700 text-white p-6 md:p-16 text-center relative overflow-hidden md:rounded-b-[3rem] shadow-xl">
+                        <div className="relative z-10 py-10 md:py-16">
+                            <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">Perfect Fit, <br className="md:hidden"/>Beautifully Crafted.</h2>
+                            <p className="text-maroon-100 md:text-lg max-w-2xl mx-auto mb-8 md:mb-10 px-4">
+                                Premium custom ladies tailoring blending traditional maggam work with modern elegance. Experience the perfect fit.
+                            </p>
+                            <button 
+                                onClick={() => setActiveTab('track')}
+                                className="bg-white text-maroon-900 px-8 py-3.5 md:py-4 rounded-full font-bold shadow-lg hover:bg-gray-50 active:scale-95 transition-all text-sm md:text-base w-[90%] md:w-auto mx-auto block md:inline-block"
+                            >
+                                <i className="fa-solid fa-magnifying-glass mr-2"></i> Track Your Order
+                            </button>
+                        </div>
+                    </section>
+
+                    {/* Services Cards (Mobile Friendly Grid) */}
+                    <section className="px-4 md:px-8 max-w-6xl mx-auto pt-6">
+                        <h3 className="font-serif text-2xl md:text-3xl font-bold text-center mb-8 text-gray-900">Our Specialties</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                            {[
+                                { title: 'Designer Blouses', icon: 'fa-shirt', color: 'text-rose-600', bg: 'bg-rose-50', desc: 'Custom maggam work & modern cuts.' },
+                                { title: 'Dresses & Kurtis', icon: 'fa-child-dress', color: 'text-blue-600', bg: 'bg-blue-50', desc: 'Elegant daily and party wear.' },
+                                { title: 'Bridal Wear', icon: 'fa-star', color: 'text-purple-600', bg: 'bg-purple-50', desc: 'Exquisite lehengas and wedding stitching.' },
+                                { title: 'Alterations', icon: 'fa-scissors', color: 'text-emerald-600', bg: 'bg-emerald-50', desc: 'Perfect fitting for your existing wardrobe.' }
+                            ].map((service, idx) => (
+                                <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 text-center lux-shadow flex flex-col items-center">
+                                    <div className={`${service.bg} ${service.color} w-16 h-16 rounded-full flex items-center justify-center mb-4 text-2xl`}>
+                                        <i className={`fa-solid ${service.icon}`}></i>
+                                    </div>
+                                    <h4 className="font-bold text-gray-900 mb-2">{service.title}</h4>
+                                    <p className="text-sm text-gray-500">{service.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            );
+        }
+
+        function TrackTab({ orders }) {
+            const [searchId, setSearchId] = useState('');
+            const [result, setResult] = useState(null);
+
+            const handleSearch = (e) => {
+                e.preventDefault();
+                if (!searchId.trim()) return;
+                const found = orders.find(o => o.orderId.toLowerCase() === searchId.trim().toLowerCase());
+                setResult(found || 'none');
+            };
+
+            return (
+                <div className="max-w-2xl mx-auto px-4 py-8 md:py-16 text-center animate-in fade-in">
+                    <div className="bg-white p-6 md:p-10 rounded-3xl lux-shadow border border-gray-100">
+                        <div className="w-16 h-16 bg-maroon-50 text-maroon-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+                            <i className="fa-solid fa-box-open"></i>
+                        </div>
+                        <h2 className="font-serif text-2xl md:text-3xl font-bold mb-3 text-gray-900">Track Your Outfit</h2>
+                        <p className="text-gray-500 text-sm md:text-base mb-8">Enter the Order ID provided by the shop.</p>
+                        
+                        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-8">
+                            <input 
+                                type="text" 
+                                placeholder="e.g. ORD-1234" 
+                                value={searchId} 
+                                onChange={e => setSearchId(e.target.value)} 
+                                className="flex-grow px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-maroon-500 outline-none text-lg text-center sm:text-left" 
+                                required
+                            />
+                            <button type="submit" className="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition-colors active:scale-95">
+                                Track
+                            </button>
+                        </form>
+                        
+                        {result && result !== 'none' && (
+                            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 text-left relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-maroon-600 to-rose-400"></div>
+                                <div className="flex justify-between items-start mb-4 mt-2">
+                                    <div>
+                                        <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Order Details</p>
+                                        <h3 className="text-2xl font-bold text-gray-900">{result.orderId}</h3>
+                                    </div>
+                                    <span className="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-xs font-bold border border-green-200 text-center">
+                                        <i className="fa-solid fa-circle text-[8px] mr-1.5 animate-pulse"></i>{result.status}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-1">Customer</p>
+                                        <p className="font-semibold text-gray-900 truncate">{result.customerName}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-1">Item Type</p>
+                                        <p className="font-semibold text-gray-900">{result.itemType}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {result === 'none' && (
+                            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
+                                <i className="fa-solid fa-triangle-exclamation mr-2"></i> Order not found. Please check your ID.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function OwnerTab({ db, cloudStatus, orders, showMessage, setOrders }) {
             const [passcode, setPasscode] = useState('');
             const [isAuthenticated, setIsAuthenticated] = useState(false);
-            const [newOrder, setNewOrder] = useState({ customerName: '', itemType: '', status: 'Fabric Received' });
+            const [newOrder, setNewOrder] = useState({ customerName: '', itemType: 'Blouse (Normal)', status: 'Fabric Received' });
+            const [isSubmitting, setIsSubmitting] = useState(false);
 
             const handleLogin = (e) => {
                 e.preventDefault();
                 if (passcode === 'jyothi123') setIsAuthenticated(true);
-                else showMessage("Error", "Incorrect Passcode");
+                else showMessage("Error", "Incorrect Passcode", "error");
             };
 
             const handleAddOrder = async (e) => {
                 e.preventDefault();
-                const orderId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
-                await addOrderToSystem({ orderId, ...newOrder, date: new Date().toISOString() });
+                if (!newOrder.customerName.trim()) return;
                 
-                // Clear the form after adding
-                setNewOrder({ customerName: '', itemType: '', status: 'Fabric Received' });
-                showMessage("Success", `Order ${orderId} saved!`);
+                setIsSubmitting(true);
+                const orderId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+                const orderData = { orderId, ...newOrder, date: new Date().toISOString() };
+
+                // Optimistic UI Update (shows instantly before cloud)
+                setOrders(prev => [orderData, ...prev]);
+
+                if (db) {
+                    try {
+                        const { collection, addDoc } = window.FirebaseTools;
+                        await addDoc(collection(db, 'public_orders'), orderData);
+                        setNewOrder({ customerName: '', itemType: 'Blouse (Normal)', status: 'Fabric Received' }); // Clear form
+                        showMessage("Success", `Order ${orderId} saved!`, "success");
+                    } catch (err) {
+                        console.error(err);
+                        showMessage("Warning", "Order saved locally, but failed to reach cloud.", "error");
+                    }
+                } else {
+                    showMessage("Error", "Cloud disconnected. Cannot save.", "error");
+                }
+                setIsSubmitting(false);
             };
 
             if (!isAuthenticated) return (
-<!-- ... existing code ... -->
+                <div className="max-w-md mx-auto py-12 md:py-20 px-4">
+                    <div className="bg-white p-8 rounded-3xl lux-shadow border border-gray-100 text-center">
+                        <div className="w-16 h-16 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+                            <i className="fa-solid fa-lock"></i>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-2 text-gray-900">Owner Access</h2>
+                        <p className="text-gray-500 text-sm mb-6">Enter secure passcode to manage orders</p>
+                        
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <input 
+                                type="password" 
+                                placeholder="Enter Passcode" 
+                                value={passcode} 
+                                onChange={e => setPasscode(e.target.value)} 
+                                className="border border-gray-300 p-4 w-full rounded-xl text-center text-xl tracking-widest focus:ring-2 focus:ring-maroon-500 outline-none" 
+                                required
+                            />
+                            <button type="submit" className="bg-maroon-900 text-white px-6 py-4 rounded-xl font-bold w-full active:scale-95 transition-transform">
+                                Unlock Dashboard
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="max-w-6xl mx-auto py-6 px-4 md:px-8 space-y-6">
+                    {/* Dashboard Header Status */}
+                    <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+                            <div className="flex items-center mt-1 text-sm font-medium">
+                                <span className="text-gray-500 mr-2">Database:</span>
+                                {cloudStatus === 'connected' ? (
+                                    <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-100 flex items-center">
+                                        <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse"></span> Active
+                                    </span>
+                                ) : (
+                                    <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-100">
+                                        Disconnected
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                        <button onClick={() => setIsAuthenticated(false)} className="text-gray-500 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 w-full sm:w-auto">
+                            <i className="fa-solid fa-arrow-right-from-bracket mr-2"></i> Lock Screen
+                        </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Add Order Form (Takes 1 column on desktop, stacks on top for mobile) */}
+                        <div className="lg:col-span-1">
+                            <div className="bg-white p-5 md:p-6 rounded-2xl lux-shadow border border-gray-200 sticky top-24">
+                                <h3 className="font-bold text-lg mb-4 text-gray-900 border-b pb-2"><i className="fa-solid fa-plus-circle text-maroon-600 mr-2"></i> New Order</h3>
+                                <form onSubmit={handleAddOrder} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-600 mb-1">Customer Name</label>
+                                        <input placeholder="E.g. Priya" required value={newOrder.customerName} onChange={e => setNewOrder({...newOrder, customerName: e.target.value})} className="border border-gray-300 p-3 w-full rounded-lg focus:ring-1 focus:ring-maroon-500 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-600 mb-1">Item Type</label>
+                                        <select value={newOrder.itemType} onChange={e => setNewOrder({...newOrder, itemType: e.target.value})} className="border border-gray-300 p-3 w-full rounded-lg focus:ring-1 focus:ring-maroon-500 outline-none bg-white">
+                                            <option>Blouse (Normal)</option>
+                                            <option>Blouse (Maggam)</option>
+                                            <option>Punjabi Dress</option>
+                                            <option>Lehenga</option>
+                                            <option>Alteration</option>
+                                        </select>
+                                    </div>
+                                    <button disabled={isSubmitting} className={`bg-gray-900 text-white p-3.5 rounded-lg font-bold w-full transition-all ${isSubmitting ? 'opacity-70' : 'active:scale-95 hover:bg-black'}`}>
+                                        {isSubmitting ? 'Saving...' : 'Save Order to Cloud'}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        {/* Order List (Takes 2 columns on desktop) */}
+                        <div className="lg:col-span-2">
+                            <div className="bg-white p-5 md:p-6 rounded-2xl lux-shadow border border-gray-200 flex flex-col h-full min-h-[500px]">
+                                <h3 className="font-bold text-lg mb-4 text-gray-900 border-b pb-2 flex justify-between items-center">
+                                    <span><i className="fa-solid fa-list-check text-gray-500 mr-2"></i> Active Orders</span>
+                                    <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">{orders.length} total</span>
+                                </h3>
+                                
+                                <div className="overflow-y-auto flex-grow pr-2 custom-scrollbar space-y-3">
+                                    {orders.length === 0 ? (
+                                        <div className="text-center py-10 text-gray-400">
+                                            <i className="fa-solid fa-folder-open text-4xl mb-3 opacity-50"></i>
+                                            <p>No orders in the system yet.</p>
+                                        </div>
+                                    ) : (
+                                        orders.map(o => (
+                                            <div key={o.orderId || o.id} className="border border-gray-200 p-4 rounded-xl hover:bg-gray-50 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                                                <div>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="font-mono text-xs font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{o.orderId}</span>
+                                                        <strong className="text-gray-900 text-lg">{o.customerName}</strong>
+                                                    </div>
+                                                    <p className="text-sm text-gray-500">{o.itemType}</p>
+                                                </div>
+                                                <div className="text-left sm:text-right">
+                                                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${o.status === 'Ready for Pickup' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                                                        {o.status}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
