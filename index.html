@@ -133,14 +133,14 @@
         const CLOUDINARY_CLOUD_NAME = "denl3jaft"; 
         const CLOUDINARY_UPLOAD_PRESET = "ml_default";
         // Paste your Firebase Config object here to activate Google Cloud Sync and SMS OTP!
-        const MY_FIREBASE_CONFIG = const firebaseConfig = {
-      apiKey: "AIzaSyC0qsco6OLLAJnzxDqXR6OFjQLmtx8_ngA",
-      authDomain: "jyothi-tailors.firebaseapp.com",
-      projectId: "jyothi-tailors",
-      storageBucket: "jyothi-tailors.firebasestorage.app",
-      messagingSenderId: "768098264466",
-      appId: "1:768098264466:web:9ed8ff328547eacf6b4d4b"
-        };
+const MY_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC0qsco6OLLAJnzxDqXR6OFjQLmtx8_ngA",
+  authDomain: "jyothi-tailors.firebaseapp.com",
+  projectId: "jyothi-tailors",
+  storageBucket: "jyothi-tailors.firebasestorage.app",
+  messagingSenderId: "768098264466",
+  appId: "1:768098264466:web:9ed8ff328547eacf6b4d4b"
+};
         // --- MOCK DATA FALLBACKS ---
         const initialOrders = [
             { id: 'ORD-101', customerName: 'Priya Sharma', customerPhone: '9876543210', items: [{ category: 'Saree Blouse', quantity: 1, images: [], description: 'Banarasi Silk, Deep neck', price: 1500 }], status: 'Processing', orderDate: '2026-06-20', expectedDeliveryDate: '2026-06-25', totalAmount: 1500, amountPaid: 500, notes: 'Urgent delivery' },
