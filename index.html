@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jyothi Atelier | Premium Bespoke Tailoring & Design</title>
+    <title>Jyothi Atelier | Premium Tailoring</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome for Icons (Reliable CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts: Inter (Modern interface) & Playfair Display (Elegant luxury serif) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter (Apple-like) & Playfair -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
-    <!-- React, ReactDOM, and Babel Standalone (Stable Versions) -->
+    <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -33,105 +35,140 @@
                             50: '#fdf3f3',
                             100: '#fbe4e4',
                             500: '#a31f24',
-                            600: '#8c151a', // Crimson Maroon
-                            700: '#7b1113',
+                            600: '#8c151a',
                             900: '#561416',
                             950: '#2d0607', 
                         },
                         accent: {
-                            50: '#fefdf6',
                             100: '#fef7da',
-                            500: '#d4af37', // Antique Gold
+                            500: '#d4af37', 
                             600: '#b5952f',
-                            700: '#8c7324',
                         }
                     },
-                    boxShadow: {
-                        'apple': '0 8px 30px rgba(0, 0, 0, 0.04)',
-                        'apple-hover': '0 20px 40px rgba(0, 0, 0, 0.08)'
+                    animation: {
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
                     }
                 }
             }
         }
     </script>
+    
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #fdfbf7; 
-            color: #1f2937;
+            background-color: #f8fafc; /* Very light slate */
             -webkit-tap-highlight-color: transparent;
         }
-        h1, h2, h3, h4, .font-serif { font-family: '"Playfair Display"', serif; }
         
-        /* Hide scrollbars elegantly */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-
+        /* Hide Scrollbar but keep functionality */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
-        .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
         }
+
+        /* Apple-like soft shadows */
+        .shadow-apple {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+        }
+
+        /* Smooth inputs */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .page-transition-enter { opacity: 0; transform: translateY(10px); }
+        .page-transition-enter-active { opacity: 1; transform: translateY(0); transition: opacity 300ms, transform 300ms; }
     </style>
 </head>
-<body class="antialiased selection:bg-brand-600 selection:text-white">
+<body class="text-slate-800 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300">
     <div id="root"></div>
 
+    <!-- Firebase Imports -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         window.FirebaseSDK = {
-            initializeApp, getAuth, signInAnonymously, onAuthStateChanged,
-            getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, RecaptchaVerifier, signInWithPhoneNumber,
+            getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc, getDocs
         };
         window.dispatchEvent(new Event('FirebaseSDKReady'));
     </script>
 
-    <!-- React JSX compilation starts -->
-    <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+    <script type="text/babel" data-type="module" data-presets="react">
+        const { useState, useEffect, useMemo, useRef } = React;
 
+        // --- CONFIGURATION ---
         const SHOP_NAME = "Jyothi Atelier";
-        const OWNER_WHATSAPP = "919948698878"; // Inquiries go directly to you
-
-        const ITEM_CATEGORIES = ['Saree Blouse', 'Lehenga', 'Kurti', 'Chudidar Set', 'Western Dress', 'Gown', 'Pant/Trouser', 'Skirt', 'Alteration', 'Maggam Work', 'Other'];
-        const ORDER_STATUSES = ['Order Received', 'Processing', 'Ready', 'Delivered'];
-        const GALLERY_CATEGORIES = ['Maggam Work', 'Machine Work', 'Hand Embroidery', 'Boutique Collection'];
-
-        // Cloudinary placeholders (will default to base64 conversion if unmodified)
-        const CLOUDINARY_CLOUD_NAME = "your_cloud_name";
-        const CLOUDINARY_UPLOAD_PRESET = "your_unsigned_preset_name";
-        const MY_FIREBASE_CONFIG = null; 
-
-        // --- FALLBACK LOCAL STORAGE UTILS ---
-        const getAdminPin = () => localStorage.getItem('adminPin') || "9887";
+        const SHOP_PHONE = "919948698878"; // Shop WhatsApp number for gallery inquiries
+        
+        // Dynamic Admin PIN getter/setter
+        const getAdminPin = () => localStorage.getItem('adminPin') || "2498";
         const setAdminPin = (newPin) => localStorage.setItem('adminPin', newPin);
-
-        // --- INITIAL MOCK DATA ---
+        
+        // Cloudinary is strongly preferred for images over Firestore due to 1MB doc limits.
+        const CLOUDINARY_CLOUD_NAME = "denl3jaft"; 
+        const CLOUDINARY_UPLOAD_PRESET = "ml_default";
+        // Paste your Firebase Config object here to activate Google Cloud Sync and SMS OTP!
+        const MY_FIREBASE_CONFIG = const firebaseConfig = {
+      apiKey: "AIzaSyC0qsco6OLLAJnzxDqXR6OFjQLmtx8_ngA",
+      authDomain: "jyothi-tailors.firebaseapp.com",
+      projectId: "jyothi-tailors",
+      storageBucket: "jyothi-tailors.firebasestorage.app",
+      messagingSenderId: "768098264466",
+      appId: "1:768098264466:web:9ed8ff328547eacf6b4d4b"
+        };
+        // --- MOCK DATA FALLBACKS ---
         const initialOrders = [
-            { id: 'ORD-101', customerName: 'Priya Sharma', customerPhone: '9876543210', items: [{ category: 'Saree Blouse', quantity: 1, images: [], description: 'Bridal neck, heavy embroidery', price: 2500 }], status: 'Processing', orderDate: '2026-06-21', expectedDeliveryDate: '2026-06-28', totalAmount: 2500, amountPaid: 1000, notes: 'Deliver before evening' },
-            { id: 'ORD-102', customerName: 'Lakshmi Rao', customerPhone: '9123456789', items: [{ category: 'Lehenga', quantity: 1, images: [], description: 'Zari border styling', price: 8000 }], status: 'Ready', orderDate: '2026-06-18', expectedDeliveryDate: '2026-06-25', totalAmount: 8000, amountPaid: 4000, notes: '' }
+            { id: 'ORD-101', customerName: 'Priya Sharma', customerPhone: '9876543210', items: [{ category: 'Saree Blouse', quantity: 1, images: [], description: 'Banarasi Silk, Deep neck', price: 1500 }], status: 'Processing', orderDate: '2026-06-20', expectedDeliveryDate: '2026-06-25', totalAmount: 1500, amountPaid: 500, notes: 'Urgent delivery' },
+            { id: 'ORD-102', customerName: 'Lakshmi R', customerPhone: '9123456789', items: [{ category: 'Lehenga', quantity: 1, images: [], description: 'Heavy Net', price: 4500 }], status: 'Ready', orderDate: '2026-06-15', expectedDeliveryDate: '2026-06-22', totalAmount: 4500, amountPaid: 4500, notes: '' },
+            { id: 'ORD-103', customerName: 'Anita Desai', customerPhone: '9988776655', items: [{ category: 'Kurti', quantity: 2, images: [], description: 'Cotton daily wear', price: 1200 }], status: 'Delivered', orderDate: '2026-06-01', deliveryDate: '2026-06-10', expectedDeliveryDate: '2026-06-10', totalAmount: 1200, amountPaid: 1200, notes: '' }
         ];
 
         const initialCustomers = [
-            { id: 'CUST-1', name: 'Priya Sharma', phone: '9876543210', address: 'Jubilee Hills', notes: 'Prefers boat neck' },
-            { id: 'CUST-2', name: 'Lakshmi Rao', phone: '9123456789', address: 'Madhapur', notes: '' },
+            { id: 'CUST-1', name: 'Priya Sharma', phone: '9876543210', address: 'Sri Sai Towers', notes: 'Prefers deep neck' },
+            { id: 'CUST-2', name: 'Lakshmi R', phone: '9123456789', address: 'Omkar Street', notes: '' },
             { id: 'CUST-3', name: 'Anita Desai', phone: '9988776655', address: 'Banjara Hills', notes: '' }
         ];
 
+        const ITEM_CATEGORIES = ['Saree Blouse', 'Lehenga', 'Kurti', 'Chudidar Set', 'Western Dress', 'Gown', 'Pant/Trouser', 'Skirt', 'Alteration', 'Maggam Work', 'Other'];
+        const ORDER_STATUSES = ['Order Received', 'Processing', 'Ready', 'Delivered'];
+        const GALLERY_CATEGORIES = ['Maggam Works', 'Machine Works', 'Bridal Blouses', 'Lehengas', 'Western', 'Other'];
+
         const initialGallery = [
-            { id: 'GAL-1', category: 'Maggam Work', image: 'https://placehold.co/600x800/8c151a/ffffff?text=Bridal+Maggam', title: 'Heavy Bridal Maggam Blouse' },
-            { id: 'GAL-2', category: 'Machine Work', image: 'https://placehold.co/600x800/b5952f/ffffff?text=Machine+Work', title: 'Floral Machine Embroidery' }
+            { id: 'GAL-1', imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80', category: 'Maggam Works', title: 'Bridal Maggam Blouse', description: 'Intricate zardosi and stone work on pure silk for wedding.' },
+            { id: 'GAL-2', imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=600&q=80', category: 'Machine Works', title: 'Floral Embroidery', description: 'Computerized machine embroidery with vibrant threadwork on cotton silk.' },
+            { id: 'GAL-3', imageUrl: 'https://images.unsplash.com/photo-1583391733958-d25e07fac04f?auto=format&fit=crop&w=600&q=80', category: 'Lehengas', title: 'Pastel Net Lehenga', description: 'Elegant reception wear lehenga with subtle glitter and heavy borders.' },
+            { id: 'GAL-4', imageUrl: 'https://images.unsplash.com/photo-1605763240000-7e93b172d754?auto=format&fit=crop&w=600&q=80', category: 'Maggam Works', title: 'Peacock Motif Backneck', description: 'Heavy authentic maggam work featuring traditional peacock designs.' }
         ];
 
+        // --- UTILS ---
+        const generateId = (prefix) => `${prefix}-${Math.floor(Math.random() * 90000) + 10000}`;
+        const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        
         const uploadImage = async (file) => {
             if (CLOUDINARY_CLOUD_NAME === "your_cloud_name") {
                 return new Promise((resolve) => {
@@ -148,52 +185,32 @@
             return data.secure_url;
         };
 
-        const generateId = (prefix) => `${prefix}-${Math.floor(Math.random() * 90000) + 10000}`;
-        const formatDate = (dateStr) => {
-            if (!dateStr) return 'TBD';
-            return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-        };
-
         const getWhatsAppLink = (order) => {
-            const cleanNum = order.customerPhone.replace(/\D/g, '');
-            const itemsText = order.items.map(i => `- ${i.quantity}x ${i.category}`).join('%0A');
+            let cleanNum = order.customerPhone.replace(/\D/g, '');
+            if (cleanNum.length === 10) cleanNum = '91' + cleanNum;
+            const itemsText = order.items.map(i => `▫️ ${i.category} (x${i.quantity})`).join('%0A');
             const text = `*Order Summary - ${SHOP_NAME}*%0A%0A👤 Customer: ${order.customerName}%0A📱 Mobile: ${order.customerPhone}%0A🔖 Order ID: ${order.id}%0A%0A*Items:*%0A${itemsText}%0A%0A⏳ Status: *${order.status}*%0A📅 Expected Delivery: ${formatDate(order.expectedDeliveryDate)}%0A%0AThank you for choosing us!`;
             return `https://wa.me/${cleanNum}?text=${text}`;
         };
 
-        const getGalleryWhatsAppLink = (item) => {
-            const text = `Hi ${SHOP_NAME}, I saw this beautiful design in your app gallery and would like to know more about it!%0A%0A*Design:* ${item.title}%0A*Category:* ${item.category}%0A*ID:* ${item.id}%0A%0ACan you share the pricing and details?`;
-            return `https://wa.me/${OWNER_WHATSAPP}?text=${text}`;
+        const getGalleryInquiryLink = (item) => {
+            const text = `Hi ${SHOP_NAME}, I saw this beautiful design in your gallery and would like to know more!%0A%0A*Design:* ${item.title}%0A*Category:* ${item.category}%0A*Ref ID:* ${item.id}%0A%0AIs it possible to customize this for my measurements?`;
+            return `https://wa.me/${SHOP_PHONE}?text=${text}`;
         };
 
-        const Button = ({ children, variant = 'primary', className = '', icon, ...props }) => {
-            const base = "relative inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm font-bold rounded-2xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none";
-            const variants = {
-                primary: "bg-brand-900 text-white shadow-lg hover:shadow-xl hover:bg-brand-950",
-                secondary: "bg-accent-500 text-brand-950 hover:bg-accent-600 shadow-sm",
-                outline: "border-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300",
-                danger: "bg-red-50 text-red-600 hover:bg-red-100"
-            };
-            return (
-                <button className={`${base} ${variants[variant]} ${className}`} {...props}>
-                    {icon && <i className={`fa-solid ${icon}`}></i>}
-                    {children}
-                </button>
-            );
-        };
-
+        // --- UI COMPONENTS ---
         const Toast = ({ message, type, onClose }) => {
             useEffect(() => {
                 const timer = setTimeout(onClose, 3000);
                 return () => clearTimeout(timer);
             }, [onClose]);
 
-            const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-800';
-            const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info';
+            const bg = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-brand-900';
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
 
             return (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] animate-bounce">
-                    <div className={`${bg} text-white px-6 py-3.5 rounded-full shadow-2xl flex items-center gap-3 text-sm font-bold tracking-wide`}>
+                <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[100] animate-slide-up`}>
+                    <div className={`${bg} text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 text-sm font-medium tracking-wide glass-card border-none`}>
                         <i className={`fa-solid ${icon} text-lg`}></i>
                         {message}
                     </div>
@@ -201,89 +218,175 @@
             );
         };
 
-        const LoginView = ({ onLogin, showToast }) => {
-            const [role, setRole] = useState('client'); 
-            const [input, setInput] = useState('');
-            const [step, setStep] = useState(1); // 1: Enter Phone, 2: OTP (Simulation)
+        const Button = ({ children, onClick, variant = 'primary', className = '', type = 'button', disabled = false, icon }) => {
+            const base = "relative inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-2xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none overflow-hidden group";
+            const variants = {
+                primary: "bg-brand-900 text-white shadow-lg hover:shadow-xl hover:bg-brand-950",
+                secondary: "bg-accent-500 text-brand-950 shadow hover:bg-accent-600",
+                outline: "bg-transparent border-2 border-brand-900 text-brand-900 hover:bg-brand-50",
+                ghost: "bg-transparent text-slate-600 hover:bg-slate-100",
+                danger: "bg-red-50 text-red-600 hover:bg-red-100"
+            };
+            return (
+                <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${variants[variant]} ${className}`}>
+                    {icon && <i className={`fa-solid ${icon}`}></i>}
+                    <span className="relative z-10">{children}</span>
+                </button>
+            );
+        };
 
-            const handleSubmit = (e) => {
+        // --- VIEWS ---
+
+        const LoginView = ({ onLogin, showToast, authReady, sendOTP, verifyOTP, otpSent }) => {
+            const [role, setRole] = useState('client'); 
+            const [phoneInput, setPhoneInput] = useState('');
+            const [otpInput, setOtpInput] = useState('');
+            const [adminPinInput, setAdminPinInput] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            const handleSendOTP = async (e) => {
                 e.preventDefault();
-                if (role === 'admin') {
-                    if (input === getAdminPin()) {
-                        onLogin('admin', null);
-                    } else {
-                        showToast('Invalid Owner PIN! Default is 9887.', 'error');
-                    }
+                if (phoneInput.length < 10) {
+                    showToast("Please enter a valid 10-digit phone number", "error");
+                    return;
+                }
+                setLoading(true);
+                try {
+                    await sendOTP(phoneInput);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleVerifyOTP = async (e) => {
+                e.preventDefault();
+                if (otpInput.length < 6) {
+                    showToast("Please enter the 6-digit code received", "error");
+                    return;
+                }
+                setLoading(true);
+                try {
+                    await verifyOTP(otpInput);
+                } catch (err) {
+                    console.error(err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleAdminLogin = (e) => {
+                e.preventDefault();
+                if (adminPinInput === getAdminPin()) {
+                    onLogin('admin', null);
                 } else {
-                    if (step === 1) {
-                        if (input.replace(/\D/g, '').length >= 10) {
-                            setStep(2);
-                        } else {
-                            showToast('Please enter a valid 10-digit mobile number.', 'error');
-                        }
-                    } else {
-                        onLogin('client', input);
-                    }
+                    showToast("Invalid PIN. Default is 9887.", "error");
                 }
             };
 
             return (
                 <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
-                    <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-apple border border-slate-100">
+                    <div className="w-full max-w-md glass-card rounded-3xl p-8 shadow-apple animate-slide-up">
                         <div className="text-center mb-8">
                             <div className="w-16 h-16 bg-brand-900 text-accent-500 rounded-2xl mx-auto flex items-center justify-center text-3xl font-serif font-bold shadow-lg mb-4">
                                 J
                             </div>
-                            <h2 className="text-2xl font-bold text-slate-800">Welcome to Jyothi Atelier</h2>
-                            <p className="text-sm text-slate-500 mt-1">Access your designer portal securely.</p>
+                            <h2 className="text-2xl font-bold text-slate-800">Welcome Back</h2>
+                            <p className="text-sm text-slate-500 mt-1">Sign in to track your bespoke orders.</p>
                         </div>
 
-                        <div className="flex bg-slate-100 p-1 rounded-2xl mb-6">
-                            <button onClick={() => { setRole('client'); setStep(1); setInput(''); }} className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all ${role === 'client' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>Customer Login</button>
-                            <button onClick={() => { setRole('admin'); setInput(''); }} className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all ${role === 'admin' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>Owner Login</button>
+                        <div className="flex bg-slate-100 rounded-xl p-1 mb-6">
+                            <button onClick={() => { setRole('client'); setPhoneInput(''); }} className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${role === 'client' ? 'bg-white shadow text-brand-900' : 'text-slate-500'}`}>Customer</button>
+                            <button onClick={() => { setRole('admin'); setAdminPinInput(''); }} className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${role === 'admin' ? 'bg-white shadow text-brand-900' : 'text-slate-500'}`}>Owner</button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {role === 'client' ? (
-                                step === 1 ? (
+                        {role === 'client' ? (
+                            !otpSent ? (
+                                <form onSubmit={handleSendOTP} className="space-y-5">
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mobile Number</label>
+                                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Mobile Number</label>
                                         <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">+91</span>
-                                            <input type="tel" autoFocus value={input} onChange={e => setInput(e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold text-slate-800" placeholder="98765 43210" required />
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">+91</span>
+                                            <input 
+                                                type="tel" 
+                                                autoFocus 
+                                                value={phoneInput} 
+                                                onChange={e => setPhoneInput(e.target.value.replace(/\D/g, ''))} 
+                                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all font-medium text-slate-800" 
+                                                placeholder="Enter 10-digit number" 
+                                                maxLength="10"
+                                                required 
+                                            />
                                         </div>
                                     </div>
-                                ) : (
-                                    <div className="animate-fade-in">
-                                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Verification Code</label>
-                                        <input type="number" autoFocus placeholder="Enter any 4 digits" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold text-center tracking-[0.5em]" required />
-                                        <p className="text-xs text-center text-slate-400 mt-3">OTP code sent to +91 {input}. <button type="button" onClick={() => setStep(1)} className="text-brand-600 font-bold hover:underline">Change Number</button></p>
-                                    </div>
-                                )
+                                    
+                                    {/* Invisible Firebase Recaptcha Anchor */}
+                                    <div id="recaptcha-container"></div>
+
+                                    <Button type="submit" disabled={loading} className="w-full py-4 text-base mt-2">
+                                        {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Send OTP Verification"}
+                                    </Button>
+                                </form>
                             ) : (
+                                <form onSubmit={handleVerifyOTP} className="space-y-5 animate-fade-in">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Enter OTP Sent to +91 {phoneInput}</label>
+                                        <input 
+                                            type="text" 
+                                            autoFocus 
+                                            value={otpInput}
+                                            onChange={e => setOtpInput(e.target.value.replace(/\D/g, ''))}
+                                            placeholder="••••••" 
+                                            maxLength="6"
+                                            className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all font-medium text-center tracking-[0.5em] text-xl text-slate-800" 
+                                            required 
+                                        />
+                                    </div>
+                                    <Button type="submit" disabled={loading} className="w-full py-4 text-base mt-2">
+                                        {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Verify & Sign In"}
+                                    </Button>
+                                </form>
+                            )
+                        ) : (
+                            <form onSubmit={handleAdminLogin} className="space-y-5">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Admin Security PIN</label>
-                                    <input type="password" autoFocus value={input} onChange={e => setInput(e.target.value)} placeholder="••••" className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold text-center tracking-widest" required />
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Admin PIN</label>
+                                    <input 
+                                        type="password" 
+                                        autoFocus 
+                                        value={adminPinInput} 
+                                        onChange={e => setAdminPinInput(e.target.value)} 
+                                        placeholder="••••" 
+                                        className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all font-medium text-center tracking-widest text-xl text-slate-800" 
+                                        required 
+                                    />
                                 </div>
-                            )}
-                            
-                            <Button type="submit" className="w-full py-4 text-base mt-2">
-                                {role === 'client' && step === 1 ? 'Send OTP' : 'Secure Login'}
-                            </Button>
-                        </form>
+                                <Button type="submit" className="w-full py-4 text-base mt-2">
+                                    Secure Owner Login
+                                </Button>
+                            </form>
+                        )}
+                        <p className="text-[10px] text-center text-slate-400 mt-4 leading-relaxed">
+                            Secured by Google Firebase Auth. Verify live SMS to log in securely.
+                        </p>
                     </div>
                 </div>
             );
         };
 
         const ClientDashboard = ({ phone, orders, gallery, logout }) => {
-            const [activeTab, setActiveTab] = useState('orders'); 
-            const [galCategory, setGalCategory] = useState('All');
+            const [activeTab, setActiveTab] = useState('orders'); // 'orders' or 'gallery'
+            const [galleryFilter, setGalleryFilter] = useState('All');
+            const [selectedImage, setSelectedImage] = useState(null);
 
             const myOrders = useMemo(() => {
                 const now = new Date();
                 return orders.filter(o => {
-                    if (o.customerPhone.replace(/\D/g, '') !== phone.replace(/\D/g, '')) return false;
+                    const cleanPhone = o.customerPhone.replace(/\D/g, '');
+                    const cleanTarget = phone.replace(/\D/g, '');
+                    if (!cleanPhone.includes(cleanTarget) && !cleanTarget.includes(cleanPhone)) return false;
+                    
                     if (o.status === 'Delivered' && o.deliveryDate) {
                         const delDate = new Date(o.deliveryDate);
                         const diffDays = (now - delDate) / (1000 * 60 * 60 * 24);
@@ -294,19 +397,18 @@
             }, [orders, phone]);
 
             const filteredGallery = useMemo(() => {
-                if (!gallery) return [];
-                if (galCategory === 'All') return gallery;
-                return gallery.filter(g => g.category === galCategory);
-            }, [gallery, galCategory]);
+                if (galleryFilter === 'All') return gallery;
+                return gallery.filter(item => item.category === galleryFilter);
+            }, [gallery, galleryFilter]);
 
             const getProgressIndex = (status) => ORDER_STATUSES.indexOf(status);
 
             return (
-                <div className="max-w-3xl mx-auto p-4 pb-24 animate-fade-in">
+                <div className="max-w-4xl mx-auto p-4 pb-24 animate-fade-in">
                     <div className="flex justify-between items-end mb-6 mt-4">
                         <div>
                             <p className="text-sm text-slate-500 font-medium mb-1">Welcome back,</p>
-                            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">{myOrders[0]?.customerName || 'Customer'}</h1>
+                            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">{myOrders[0]?.customerName || 'Premium Client'}</h1>
                         </div>
                         <button onClick={logout} className="w-10 h-10 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors">
                             <i className="fa-solid fa-power-off"></i>
@@ -314,21 +416,23 @@
                     </div>
 
                     {/* Navigation Tabs */}
-                    <div className="flex bg-slate-100 p-1 rounded-xl mb-8">
-                        <button onClick={() => setActiveTab('orders')} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === 'orders' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>My Orders</button>
-                        <button onClick={() => setActiveTab('gallery')} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${activeTab === 'gallery' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>
-                            <i className="fa-solid fa-sparkles text-accent-500"></i> Inspiration
+                    <div className="flex bg-slate-100 rounded-2xl p-1 mb-8 max-w-sm">
+                        <button onClick={() => setActiveTab('orders')} className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${activeTab === 'orders' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>
+                            <i className="fa-solid fa-box"></i> My Orders
+                        </button>
+                        <button onClick={() => setActiveTab('gallery')} className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${activeTab === 'gallery' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>
+                            <i className="fa-solid fa-gem"></i> Atelier Gallery
                         </button>
                     </div>
 
-                    {activeTab === 'orders' && (
+                    {activeTab === 'orders' ? (
                         myOrders.length === 0 ? (
                             <div className="glass-card rounded-3xl p-10 text-center flex flex-col items-center">
                                 <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                                     <i className="fa-solid fa-box-open text-4xl text-slate-300"></i>
                                 </div>
                                 <h3 className="text-xl font-bold text-slate-700 mb-2">No Active Orders</h3>
-                                <p className="text-slate-500 text-sm max-w-xs">You don't have any recent orders. Visit our atelier to commission a new bespoke design.</p>
+                                <p className="text-slate-500 text-sm max-w-xs">You don't have any recent orders linked to this number (+91 {phone}). Visit our atelier to register custom metrics.</p>
                             </div>
                         ) : (
                             <div className="space-y-6">
@@ -336,6 +440,7 @@
                                     const progIdx = getProgressIndex(order.status);
                                     return (
                                         <div key={order.id} className="glass-card rounded-3xl overflow-hidden shadow-apple transition-transform duration-300 hover:scale-[1.01]">
+                                            {/* Header */}
                                             <div className="p-5 border-b border-slate-100 bg-white/50 flex justify-between items-center">
                                                 <div>
                                                     <span className="text-xs font-bold text-brand-700 uppercase tracking-widest bg-brand-50 px-2 py-1 rounded-md">#{order.id}</span>
@@ -348,6 +453,7 @@
                                                 </div>
                                             </div>
 
+                                            {/* Progress Tracker */}
                                             <div className="p-6 bg-white">
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-100 z-0"></div>
@@ -367,6 +473,7 @@
                                                 </div>
                                             </div>
 
+                                            {/* Details */}
                                             <div className="p-5 bg-slate-50/50 border-t border-slate-100">
                                                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Garment Details</h4>
                                                 <div className="space-y-3 mb-5">
@@ -404,43 +511,67 @@
                                 })}
                             </div>
                         )
-                    )}
-
-                    {activeTab === 'gallery' && (
+                    ) : (
                         <div className="animate-fade-in">
                             <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mb-4">
                                 {['All', ...GALLERY_CATEGORIES].map(cat => (
-                                    <button key={cat} onClick={() => setGalCategory(cat)} className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${galCategory === cat ? 'bg-brand-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}>
+                                    <button 
+                                        key={cat} 
+                                        onClick={() => setGalleryFilter(cat)}
+                                        className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-colors border ${galleryFilter === cat ? 'bg-brand-900 text-white border-brand-900 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                    >
                                         {cat}
                                     </button>
                                 ))}
                             </div>
-                            
+
                             {filteredGallery.length === 0 ? (
-                                <div className="p-12 text-center text-slate-400">
-                                    <i className="fa-solid fa-image text-4xl mb-3 opacity-50"></i>
-                                    <p className="font-medium text-sm">No designs in this category yet.</p>
+                                <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                                    <i className="fa-regular fa-images text-4xl text-slate-300 mb-3"></i>
+                                    <p className="text-slate-500 font-medium">No designs loaded in this category.</p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     {filteredGallery.map(item => (
-                                        <div key={item.id} className="glass-card rounded-2xl overflow-hidden group">
-                                            <div className="relative aspect-[3/4] overflow-hidden">
-                                                <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                                                    <p className="text-white font-bold text-sm leading-tight mb-1">{item.title}</p>
-                                                    <p className="text-accent-500 text-xs font-medium mb-3">{item.category}</p>
-                                                    <a href={getGalleryWhatsAppLink(item)} target="_blank" rel="noreferrer" className="w-full bg-[#25D366] text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-[#20b858] transition-colors shadow-lg">
-                                                        <i className="fa-brands fa-whatsapp text-lg"></i> Enquire
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div className="p-3 sm:hidden">
-                                                <p className="font-bold text-slate-800 text-sm truncate">{item.title}</p>
-                                                <p className="text-xs text-slate-500">{item.category}</p>
+                                        <div 
+                                            key={item.id} 
+                                            onClick={() => setSelectedImage(item)}
+                                            className="group relative bg-slate-100 rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer shadow-sm hover:shadow-md transition-all"
+                                        >
+                                            <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                                                <h4 className="text-white font-bold text-sm leading-tight">{item.title}</h4>
+                                                <p className="text-white/80 text-xs mt-1 truncate">{item.category}</p>
                                             </div>
                                         </div>
                                     ))}
+                                </div>
+                            )}
+
+                            {/* Gallery Modal */}
+                            {selectedImage && (
+                                <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in" onClick={() => setSelectedImage(null)}>
+                                    <div className="bg-white rounded-3xl overflow-hidden w-full max-w-md shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                                        <button onClick={() => setSelectedImage(null)} className="absolute top-4 right-4 w-8 h-8 bg-black/50 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-colors z-10">
+                                            <i className="fa-solid fa-times"></i>
+                                        </button>
+                                        <div className="w-full h-80 bg-slate-100 relative">
+                                            <img src={selectedImage.imageUrl} alt={selectedImage.title} className="w-full h-full object-cover" />
+                                            <div className="absolute top-4 left-4 bg-brand-900/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                                {selectedImage.category}
+                                            </div>
+                                        </div>
+                                        <div className="p-6">
+                                            <h3 className="text-xl font-bold text-slate-800 mb-2">{selectedImage.title}</h3>
+                                            <p className="text-sm text-slate-600 mb-6 leading-relaxed">{selectedImage.description}</p>
+                                            
+                                            <a href={getGalleryInquiryLink(selectedImage)} target="_blank" rel="noopener noreferrer" className="block w-full">
+                                                <Button type="button" className="w-full py-3 bg-[#25D366] hover:bg-[#1ebd5b] text-white border-none shadow-lg shadow-green-500/30" icon="fa-brands fa-whatsapp text-lg">
+                                                    Inquire on WhatsApp
+                                                </Button>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -449,181 +580,305 @@
             );
         };
 
-        const OwnerDashboard = ({ orders, customers, setView, updateOrderStatus, logout, showToast }) => {
+        const OwnerDashboard = ({ orders, customers, gallery, setView, updateOrderStatus, logout, showToast, addGalleryItem, deleteGalleryItem, isLive }) => {
+            const [activeTab, setActiveTab] = useState('overview'); // 'overview' or 'gallery'
             const activeOrders = orders.filter(o => o.status !== 'Delivered');
             const todayOrders = orders.filter(o => new Date(o.orderDate).toDateString() === new Date().toDateString());
-            
             const [filter, setFilter] = useState('All');
             const [search, setSearch] = useState('');
             const [showSettings, setShowSettings] = useState(false);
             const [pinData, setPinData] = useState({ current: '', newPin: '' });
 
+            // Gallery form state
+            const [galForm, setGalForm] = useState({ title: '', category: GALLERY_CATEGORIES[0], description: '', imageFile: null, imageUrlPreview: null });
+            const [isUploading, setIsUploading] = useState(false);
+
             const handlePinChange = (e) => {
                 e.preventDefault();
                 if (pinData.current !== getAdminPin()) {
-                    showToast('Current security PIN is incorrect!', 'error');
+                    showToast('Current PIN is incorrect.', 'error');
                     return;
                 }
                 if (pinData.newPin.length < 4) {
-                    showToast('PIN must be at least 4 digits!', 'error');
+                    showToast('New PIN must be at least 4 characters.', 'error');
                     return;
                 }
                 setAdminPin(pinData.newPin);
-                showToast('Security PIN updated successfully.', 'success');
+                showToast('Owner PIN updated successfully.', 'success');
                 setShowSettings(false);
                 setPinData({ current: '', newPin: '' });
             };
 
+            const handleGalleryUpload = async (e) => {
+                e.preventDefault();
+                if (!galForm.imageFile) {
+                    showToast('Please select an image first.', 'error');
+                    return;
+                }
+                setIsUploading(true);
+                try {
+                    const url = await uploadImage(galForm.imageFile);
+                    const newItem = {
+                        id: generateId('GAL'),
+                        title: galForm.title,
+                        category: galForm.category,
+                        description: galForm.description,
+                        imageUrl: url
+                    };
+                    await addGalleryItem(newItem);
+                    showToast('Design added to portfolio!', 'success');
+                    setGalForm({ title: '', category: GALLERY_CATEGORIES[0], description: '', imageFile: null, imageUrlPreview: null });
+                } catch (err) {
+                    showToast('Failed to upload image.', 'error');
+                } finally {
+                    setIsUploading(false);
+                }
+            };
+
+            const handleImageSelect = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    setGalForm({ ...galForm, imageFile: file, imageUrlPreview: URL.createObjectURL(file) });
+                }
+            };
+
             const filteredOrders = useMemo(() => {
-                let list = orders;
-                if (filter !== 'All') list = list.filter(o => o.status === filter);
+                let filtered = orders;
+                if (filter !== 'All') filtered = filtered.filter(o => o.status === filter);
                 if (search) {
                     const q = search.toLowerCase();
-                    list = list.filter(o => o.customerName.toLowerCase().includes(q) || o.customerPhone.includes(q) || o.id.toLowerCase().includes(q));
+                    filtered = filtered.filter(o => o.customerName.toLowerCase().includes(q) || o.customerPhone.includes(q) || o.id.toLowerCase().includes(q));
                 }
-                return list.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+                return filtered.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
             }, [orders, filter, search]);
 
             return (
                 <div className="max-w-6xl mx-auto p-4 md:p-8 animate-fade-in pb-24">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Atelier Manager</h1>
-                            <p className="text-slate-500 font-medium">Bespoke operational and order dashboard.</p>
+                            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Owner Dashboard</h1>
+                            <p className="text-slate-500 font-medium">Manage your atelier operations and portfolio.</p>
+                            
+                            {/* Live Sync Status indicator */}
+                            <div className="mt-2 flex items-center gap-2">
+                                <span className={`inline-block w-2.5 h-2.5 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                                <span className="text-xs font-semibold text-slate-600">
+                                    {isLive ? 'Live Sync Active (Firebase Mode)' : 'Offline Local Mode'}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex flex-wrap gap-2.5">
-                            <button onClick={() => setShowSettings(true)} className="w-11 h-11 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand-600 hover:border-brand-100 transition-all" title="Settings">
-                                <i className="fa-solid fa-cog"></i>
-                            </button>
-                            <button onClick={() => setView('galleryManager')} className="px-4 py-2.5 bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200 rounded-xl text-xs font-bold flex items-center gap-2 transition-all">
-                                <i className="fa-solid fa-images"></i> Manage Gallery
-                            </button>
-                            <Button onClick={() => setView('newCustomer')} variant="outline" className="text-xs px-4 py-2.5 rounded-xl border-slate-200" icon="fa-user-plus">New Customer</Button>
-                            <Button onClick={() => setView('newOrder')} variant="primary" className="text-xs px-4 py-2.5 rounded-xl" icon="fa-plus">New Order</Button>
-                            <button onClick={logout} className="w-11 h-11 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all">
-                                <i className="fa-solid fa-sign-out-alt"></i>
-                            </button>
+                        <div className="flex gap-3">
+                            <button onClick={() => setShowSettings(true)} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand-600 transition-colors" title="Settings"><i className="fa-solid fa-cog"></i></button>
+                            <Button onClick={() => setView('newCustomer')} variant="secondary" icon="fa-user-plus" className="text-xs px-4 py-2 rounded-xl">Add Client</Button>
+                            <Button onClick={() => setView('newOrder')} variant="primary" icon="fa-plus" className="text-xs px-4 py-2 rounded-xl">New Order</Button>
+                            <button onClick={logout} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 hover:text-red-500"><i className="fa-solid fa-sign-out-alt"></i></button>
                         </div>
                     </div>
 
-                    {/* Quick Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 animate-fade-in">
-                        {[
-                            { label: 'Active Orders', val: activeOrders.length, icon: 'fa-scissors', bg: 'bg-rose-50', color: 'text-rose-600' },
-                            { label: 'Today\'s Orders', val: todayOrders.length, icon: 'fa-calendar-day', bg: 'bg-blue-50', color: 'text-blue-600' },
-                            { label: 'Pending Delivery', val: activeOrders.filter(o=>o.status==='Ready').length, icon: 'fa-truck-fast', bg: 'bg-amber-50', color: 'text-amber-600' },
-                            { label: 'Registered Clients', val: customers.length, icon: 'fa-users', bg: 'bg-emerald-50', color: 'text-emerald-600' }
-                        ].map((s, i) => (
-                            <div key={i} className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4 transition-transform hover:-translate-y-1">
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${s.bg} ${s.color}`}>
-                                    <i className={`fa-solid ${s.icon} text-lg`}></i>
+                    {/* Tabs */}
+                    <div className="flex bg-slate-100 rounded-2xl p-1 mb-8 max-w-md">
+                        <button onClick={() => setActiveTab('overview')} className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${activeTab === 'overview' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>
+                            <i className="fa-solid fa-chart-pie"></i> Orders & Stats
+                        </button>
+                        <button onClick={() => setActiveTab('gallery')} className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${activeTab === 'gallery' ? 'bg-white shadow text-brand-900' : 'text-slate-500 hover:text-slate-700'}`}>
+                            <i className="fa-solid fa-images"></i> Manage Portfolio
+                        </button>
+                    </div>
+
+                    {activeTab === 'overview' ? (
+                        <div className="animate-fade-in">
+                            {/* Stats */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                {[
+                                    { label: 'Active Orders', val: activeOrders.length, icon: 'fa-scissors', color: 'text-brand-600', bg: 'bg-brand-50' },
+                                    { label: 'Today\'s Orders', val: todayOrders.length, icon: 'fa-calendar-day', color: 'text-blue-600', bg: 'bg-blue-50' },
+                                    { label: 'Pending Delivery', val: activeOrders.filter(o=>o.status==='Ready').length, icon: 'fa-truck', color: 'text-orange-600', bg: 'bg-orange-50' },
+                                    { label: 'Total Clients', val: customers.length, icon: 'fa-users', color: 'text-green-600', bg: 'bg-green-50' }
+                                ].map((stat, i) => (
+                                    <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 transition-transform hover:-translate-y-1">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.bg} ${stat.color}`}>
+                                            <i className={`fa-solid ${stat.icon} text-xl`}></i>
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-slate-800">{stat.val}</p>
+                                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{stat.label}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Controls */}
+                            <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                                <div className="relative flex-1 max-w-md">
+                                    <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search ID, Name, Mobile..." className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm font-medium shadow-sm" />
                                 </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-slate-800 leading-none mb-1">{s.val}</p>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{s.label}</p>
+                                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                    {['All', ...ORDER_STATUSES].map(s => (
+                                        <button key={s} onClick={() => setFilter(s)} className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm ${filter === s ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}>
+                                            {s}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Filters and Search Bar */}
-                    <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                        <div className="relative flex-1 max-w-md">
-                            <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search client name, mobile or Order ID..." className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-sm font-medium shadow-sm transition-all" />
-                        </div>
-                        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                            {['All', ...ORDER_STATUSES].map(s => (
-                                <button key={s} onClick={() => setFilter(s)} className={`whitespace-nowrap px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm ${filter === s ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}`}>
-                                    {s}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Orders Datatable Container */}
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-[800px]">
-                                <thead>
-                                    <tr className="bg-slate-50 text-slate-400 text-xs uppercase tracking-wider font-bold">
-                                        <th className="p-5 font-semibold">Order Context</th>
-                                        <th className="p-5 font-semibold">Stitched Items</th>
-                                        <th className="p-5 font-semibold">Value details</th>
-                                        <th className="p-5 font-semibold">Live State</th>
-                                        <th className="p-5 text-center font-semibold">Share</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 text-sm">
-                                    {filteredOrders.map(order => (
-                                        <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="p-5">
-                                                <p className="font-bold text-slate-800">{order.customerName}</p>
-                                                <p className="text-xs text-slate-400 mb-1">{order.customerPhone}</p>
-                                                <span className="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded font-mono font-bold">{order.id}</span>
-                                            </td>
-                                            <td className="p-5">
-                                                <div className="space-y-1">
-                                                    {order.items.map((it, i) => (
-                                                        <p key={i} className="text-xs text-slate-600 font-medium">
-                                                            <span className="font-bold text-brand-600">{it.quantity}x</span> {it.category}
-                                                        </p>
+                            {/* Order List */}
+                            <div className="space-y-4">
+                                {filteredOrders.length === 0 ? (
+                                    <div className="bg-white p-8 rounded-2xl text-center border border-slate-100 shadow-sm">
+                                        <p className="text-slate-500">No orders found matching the criteria.</p>
+                                    </div>
+                                ) : (
+                                    filteredOrders.map(order => (
+                                        <div key={order.id} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <span className="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-1 rounded-md">{order.id}</span>
+                                                    <span className="text-xs text-slate-400"><i className="fa-regular fa-clock mr-1"></i> {formatDate(order.orderDate)}</span>
+                                                </div>
+                                                <h3 className="text-lg font-bold text-slate-800">{order.customerName}</h3>
+                                                <p className="text-sm text-slate-500"><i className="fa-solid fa-phone text-xs mr-1"></i> {order.customerPhone}</p>
+                                                
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    {order.items.map((item, idx) => (
+                                                        <span key={idx} className="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-md border border-slate-200">
+                                                            {item.quantity}x {item.category}
+                                                        </span>
                                                     ))}
                                                 </div>
-                                            </td>
-                                            <td className="p-5 font-bold text-slate-800">
-                                                <p>₹{order.totalAmount}</p>
-                                                <p className="text-xs font-bold text-emerald-600">Paid: ₹{order.amountPaid}</p>
-                                            </td>
-                                            <td className="p-5">
-                                                <select 
-                                                    value={order.status} 
-                                                    onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                                                    className={`text-xs font-bold rounded-xl px-3 py-2 outline-none cursor-pointer appearance-none ${
-                                                        order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                                                        order.status === 'Ready' ? 'bg-amber-100 text-amber-700' :
-                                                        'bg-brand-50 text-brand-700'
-                                                    }`}
-                                                >
-                                                    {ORDER_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                                                </select>
-                                            </td>
-                                            <td className="p-5 text-center">
-                                                <a href={getWhatsAppLink(order)} target="_blank" rel="noreferrer" className="w-9 h-9 inline-flex items-center justify-center bg-[#25D366]/10 text-[#25D366] rounded-xl hover:bg-[#25D366] hover:text-white transition-all shadow-sm">
-                                                    <i className="fa-brands fa-whatsapp text-lg"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        {filteredOrders.length === 0 && (
-                            <div className="p-12 text-center text-slate-400">
-                                <i className="fa-solid fa-folder-open text-4xl mb-3 opacity-40"></i>
-                                <p className="font-medium text-sm">No orders matching your filters were found.</p>
+                                            </div>
+                                            
+                                            <div className="flex flex-col md:items-end w-full md:w-auto gap-4">
+                                                <div className="flex justify-between w-full md:w-auto md:justify-end items-center gap-6">
+                                                    <div className="text-left md:text-right">
+                                                        <p className="text-xs text-slate-400 font-medium uppercase">Total / Due</p>
+                                                        <p className="font-bold text-slate-800">₹{order.totalAmount} <span className="text-brand-600 text-sm">/ ₹{order.totalAmount - order.amountPaid}</span></p>
+                                                    </div>
+                                                    <a href={getWhatsAppLink(order)} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center hover:bg-green-100 transition-colors shadow-sm" title="Notify on WhatsApp">
+                                                        <i className="fa-brands fa-whatsapp text-xl"></i>
+                                                    </a>
+                                                </div>
+                                                
+                                                <div className="w-full">
+                                                    <select 
+                                                        value={order.status} 
+                                                        onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                                                        className={`w-full md:w-48 text-sm font-bold px-4 py-2 rounded-xl outline-none appearance-none border cursor-pointer
+                                                            ${order.status === 'Delivered' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-slate-50 border-slate-200 text-slate-700 focus:border-brand-500'}`}
+                                                    >
+                                                        {ORDER_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
                             </div>
-                        )}
-                    </div>
-
-                    {/* Change Owner PIN Settings Modal */}
-                    {showSettings && (
-                        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-                            <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-apple animate-slide-up">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold text-slate-800"><i className="fa-solid fa-lock text-brand-600 mr-2"></i>Change Admin PIN</h3>
-                                    <button onClick={() => setShowSettings(false)} className="text-slate-400 hover:text-red-500 transition-all"><i className="fa-solid fa-times text-xl"></i></button>
+                        </div>
+                    ) : (
+                        <div className="animate-fade-in grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Upload Form */}
+                            <div className="lg:col-span-1">
+                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 sticky top-24">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-4">Add design to Gallery</h3>
+                                    <form onSubmit={handleGalleryUpload} className="space-y-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Design Picture</label>
+                                            <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors cursor-pointer relative overflow-hidden group">
+                                                <input type="file" accept="image/*" onChange={handleImageSelect} className="absolute inset-0 opacity-0 cursor-pointer z-10" required />
+                                                {galForm.imageUrlPreview ? (
+                                                    <img src={galForm.imageUrlPreview} className="w-full h-40 object-cover rounded-lg" alt="preview" />
+                                                ) : (
+                                                    <div className="py-6">
+                                                        <i className="fa-solid fa-cloud-arrow-up text-3xl text-slate-300 mb-2 group-hover:text-brand-500 transition-colors"></i>
+                                                        <p className="text-sm font-medium text-slate-600">Tap to upload asset</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Design Title</label>
+                                            <input type="text" value={galForm.title} onChange={e=>setGalForm({...galForm, title: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-brand-500 outline-none text-sm" placeholder="E.g. Bridal Zardosi Blouse" required />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Category</label>
+                                            <select value={galForm.category} onChange={e=>setGalForm({...galForm, category: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-brand-500 outline-none text-sm cursor-pointer">
+                                                {GALLERY_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Description</label>
+                                            <textarea value={galForm.description} onChange={e=>setGalForm({...galForm, description: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-brand-500 outline-none text-sm resize-none h-20" placeholder="Details about custom threadwork..."></textarea>
+                                        </div>
+                                        <Button type="submit" className="w-full" disabled={isUploading} icon={isUploading ? "fa-circle-notch fa-spin" : "fa-upload"}>
+                                            {isUploading ? 'Uploading...' : 'Publish to Gallery'}
+                                        </Button>
+                                    </form>
                                 </div>
-                                <form onSubmit={handlePinChange} className="space-y-5">
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Current Admin PIN</label>
-                                        <input type="password" required value={pinData.current} onChange={e=>setPinData({...pinData, current: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold text-center tracking-widest" placeholder="••••" />
+                            </div>
+                            
+                            {/* Gallery List */}
+                            <div className="lg:col-span-2">
+                                <h3 className="text-lg font-bold text-slate-800 mb-4">Current Portfolio ({gallery.length})</h3>
+                                {gallery.length === 0 ? (
+                                    <div className="bg-white p-8 rounded-2xl text-center border border-slate-100 shadow-sm">
+                                        <p className="text-slate-500">Your gallery is empty. Upload designs to show clients.</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">New Admin PIN</label>
-                                        <input type="password" required value={pinData.newPin} onChange={e=>setPinData({...pinData, newPin: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold text-center tracking-widest" placeholder="••••" />
+                                ) : (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {gallery.map(item => (
+                                            <div key={item.id} className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex gap-4 items-center relative group">
+                                                <button onClick={() => deleteGalleryItem(item.id)} className="absolute -top-2 -right-2 w-8 h-8 bg-red-100 text-red-600 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10">
+                                                    <i className="fa-solid fa-trash text-xs"></i>
+                                                </button>
+                                                <img src={item.imageUrl} alt={item.title} className="w-20 h-24 object-cover rounded-xl" />
+                                                <div className="flex-1 min-w-0">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-2 py-0.5 rounded">{item.category}</span>
+                                                    <h4 className="font-bold text-slate-800 text-sm mt-1 truncate">{item.title}</h4>
+                                                    <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">{item.description}</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <Button type="submit" className="w-full py-4 mt-2">Update Security PIN</Button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Settings Modal */}
+                    {showSettings && (
+                        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in" onClick={() => setShowSettings(false)}>
+                            <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl overflow-y-auto max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                                <h3 className="text-xl font-bold text-slate-800 mb-2">System Config & Settings</h3>
+                                
+                                <div className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Live SMS OTP Setup Guide</h4>
+                                    <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                                        To process actual, high-speed SMS verification codes for your clients, complete these quick parameters in your Google Firebase Console:
+                                    </p>
+                                    <ol className="text-xs text-slate-600 space-y-2 list-decimal list-inside font-medium">
+                                        <li>Go to <strong>Firebase Console &gt; Authentication &gt; Sign-in Method</strong>.</li>
+                                        <li>Enable <strong>Phone</strong> provider.</li>
+                                        <li>Add your domain/app URL under <strong>Authorized Domains</strong> so invisible ReCaptcha works safely.</li>
+                                    </ol>
+                                </div>
+
+                                <form onSubmit={handlePinChange} className="space-y-4">
+                                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Change Access PIN</h4>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Current PIN</label>
+                                            <input type="password" value={pinData.current} onChange={e=>setPinData({...pinData, current: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm" required />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">New PIN</label>
+                                            <input type="password" value={pinData.newPin} onChange={e=>setPinData({...pinData, newPin: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm" required />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3 pt-2">
+                                        <Button variant="ghost" onClick={() => setShowSettings(false)} className="flex-1">Close</Button>
+                                        <Button type="submit" variant="primary" className="flex-1">Update PIN</Button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -632,484 +887,571 @@
             );
         };
 
-        const OwnerGalleryManager = ({ gallery, setGallery, setView, showToast }) => {
-            const [newItem, setNewItem] = useState({ title: '', category: GALLERY_CATEGORIES[0], image: null });
-            const [isUploading, setIsUploading] = useState(false);
+        const NewCustomerForm = ({ setView, addCustomer, showToast }) => {
+            const [formData, setFormData] = useState({ name: '', phone: '', address: '', notes: '' });
 
-            const handleImageChange = async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                setIsUploading(true);
-                try {
-                    const url = await uploadImage(file);
-                    setNewItem({ ...newItem, image: url });
-                } catch(err) {
-                    showToast('Failed to upload image', 'error');
-                }
-                setIsUploading(false);
-            };
-
-            const handleAdd = (e) => {
+            const handleSubmit = async (e) => {
                 e.preventDefault();
-                if (!newItem.image) {
-                    showToast('Please upload an image first.', 'error');
+                if (formData.phone.length < 10) {
+                    showToast('Please enter a valid phone number.', 'error');
                     return;
                 }
-                const newGalItem = { ...newItem, id: generateId('GAL') };
-                setGallery([newGalItem, ...gallery]);
-                setNewItem({ title: '', category: GALLERY_CATEGORIES[0], image: null });
-                showToast('Design added to Gallery', 'success');
-            };
-
-            const handleDelete = (id) => {
-                // Completely safe custom confirmation alternative to preserve standard behavior 
-                const confirmDelete = window.confirm("Are you sure you want to delete this design from your gallery?");
-                if (confirmDelete) {
-                    setGallery(gallery.filter(g => g.id !== id));
-                    showToast('Design removed', 'success');
-                }
+                const newCustomer = { ...formData, id: generateId('CUST') };
+                await addCustomer(newCustomer);
+                showToast('Client profile created successfully.', 'success');
+                setView('ownerDash');
             };
 
             return (
-                <div className="max-w-6xl mx-auto p-4 md:p-8 animate-fade-in pb-24">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                        <div className="flex items-center gap-4">
-                            <button onClick={() => setView('owner')} className="w-10 h-10 bg-white rounded-full shadow-sm border border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-600">
-                                <i className="fa-solid fa-arrow-left"></i>
-                            </button>
-                            <div>
-                                <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Gallery Manager</h1>
-                                <p className="text-slate-500 font-medium">Manage inspiration designs for clients.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="md:col-span-1">
-                            <div className="bg-white p-6 rounded-3xl shadow-apple border border-slate-100 sticky top-8">
-                                <h3 className="text-lg font-bold text-slate-800 mb-4">Add New Design</h3>
-                                <form onSubmit={handleAdd} className="space-y-4">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Design Title</label>
-                                        <input type="text" required value={newItem.title} onChange={e => setNewItem({...newItem, title: e.target.value})} placeholder="e.g. Peacock Maggam Work" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Category</label>
-                                        <select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm">
-                                            {GALLERY_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Photo</label>
-                                        <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
-                                            {isUploading ? (
-                                                <p className="text-sm text-slate-500"><i className="fa-solid fa-spinner fa-spin mr-2"></i>Uploading...</p>
-                                            ) : newItem.image ? (
-                                                <div>
-                                                    <img src={newItem.image} className="h-32 mx-auto rounded-lg object-cover mb-2" alt="Preview"/>
-                                                    <button type="button" onClick={() => setNewItem({...newItem, image: null})} className="text-xs text-red-500 font-bold">Remove</button>
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <i className="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-2"></i>
-                                                    <p className="text-xs text-slate-500">Tap to upload photo</p>
-                                                    <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <Button type="submit" disabled={!newItem.image || isUploading} className="w-full py-3 mt-4">Add to Gallery</Button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div className="md:col-span-2">
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                {gallery.map(item => (
-                                    <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 group">
-                                        <div className="aspect-square bg-slate-100 relative">
-                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                                            <button onClick={() => handleDelete(item.id)} className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm flex items-center justify-center hover:bg-red-500 hover:text-white">
-                                                <i className="fa-solid fa-trash text-xs"></i>
-                                            </button>
-                                        </div>
-                                        <div className="p-3">
-                                            <p className="font-bold text-slate-800 text-sm truncate">{item.title}</p>
-                                            <p className="text-xs text-slate-500">{item.category}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                                {gallery.length === 0 && (
-                                    <div className="col-span-full p-12 text-center text-slate-400 bg-white rounded-3xl border border-slate-100 border-dashed">
-                                        <i className="fa-solid fa-images text-4xl mb-3 opacity-50"></i>
-                                        <p className="font-medium">Gallery is empty.</p>
-                                        <p className="text-sm mt-1">Add photos to inspire your clients.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const WalkInCustomerForm = ({ setView, addCustomer, showToast }) => {
-            const [data, setData] = useState({ name: '', phone: '', address: '', notes: '' });
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                addCustomer({ ...data, id: generateId('CUST'), createdAt: new Date().toISOString() });
-                showToast('Customer profile saved successfully.', 'success');
-                setView('owner');
-            };
-
-            return (
-                <div className="max-w-2xl mx-auto p-4 md:p-8 animate-fade-in">
-                    <button onClick={() => setView('owner')} className="text-sm font-bold text-slate-500 hover:text-brand-700 mb-6 flex items-center gap-2">
-                        <i className="fa-solid fa-arrow-left"></i> Back to Overview
+                <div className="max-w-xl mx-auto p-4 md:p-8 animate-slide-up">
+                    <button onClick={() => setView('ownerDash')} className="mb-6 text-slate-500 hover:text-brand-600 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-left"></i> Back to Dashboard
                     </button>
-                    <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-apple">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-6">Add Walk-in Client</h2>
+                    <div className="glass-card rounded-3xl p-6 md:p-8 shadow-apple">
+                        <div className="mb-8 border-b border-slate-100 pb-4">
+                            <h2 className="text-2xl font-bold text-slate-800">Add New Client</h2>
+                            <p className="text-sm text-slate-500">Register a new customer profile.</p>
+                        </div>
                         <form onSubmit={handleSubmit} className="space-y-5">
-                            <div className="grid md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Customer Name *</label>
-                                    <input required value={data.name} onChange={e=>setData({...data, name: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold" placeholder="Priya Sharma" />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Mobile Number *</label>
-                                    <input required type="tel" value={data.phone} onChange={e=>setData({...data, phone: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold" placeholder="9876543210" />
-                                </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Full Name</label>
+                                <input type="text" value={formData.name} onChange={e=>setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all text-slate-800" placeholder="E.g. Priya Sharma" required />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Home Address</label>
-                                <textarea value={data.address} onChange={e=>setData({...data, address: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold" rows="2" placeholder="Street, landmark, city"></textarea>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Mobile Number</label>
+                                <input type="tel" value={formData.phone} onChange={e=>setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all text-slate-800" placeholder="10-digit number" maxLength="10" required />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Atelier Profile Notes / Standard Measurements</label>
-                                <textarea value={data.notes} onChange={e=>setData({...data, notes: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-bold" rows="2" placeholder="e.g. standard sizing, blouse variations"></textarea>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Address</label>
+                                <textarea value={formData.address} onChange={e=>setFormData({...formData, address: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all text-slate-800 resize-none h-24" placeholder="Client's delivery or home address..."></textarea>
                             </div>
-                            <Button type="submit" className="w-full mt-4 py-4">Save Client Profile</Button>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Measurement Notes / Preferences</label>
+                                <textarea value={formData.notes} onChange={e=>setFormData({...formData, notes: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all text-slate-800 resize-none h-24" placeholder="Standard sizing, specific styling preferences..."></textarea>
+                            </div>
+                            <Button type="submit" className="w-full py-4 text-base mt-4" icon="fa-save">Save Client Profile</Button>
                         </form>
                     </div>
                 </div>
             );
         };
 
-        const OrderCreationForm = ({ setView, addOrder, customers, showToast }) => {
+        const NewOrderForm = ({ setView, addOrder, customers, showToast }) => {
             const [searchPhone, setSearchPhone] = useState('');
-            const [selectedCust, setSelectedCust] = useState(null);
-            const [custData, setCustData] = useState({ name: '', phone: '' });
-            const [items, setItems] = useState([{ id: Date.now(), category: ITEM_CATEGORIES[0], quantity: 1, price: 0, description: '', images: [] }]);
-            const [payment, setPayment] = useState({ totalAmount: 0, amountPaid: 0 });
-            const [expDate, setExpDate] = useState('');
-            const [isUploading, setIsUploading] = useState(false);
+            const [selectedCustomer, setSelectedCustomer] = useState(null);
+            
+            const [items, setItems] = useState([{ category: ITEM_CATEGORIES[0], quantity: 1, description: '', price: 0, images: [] }]);
+            const [expectedDate, setExpectedDate] = useState('');
+            const [amountPaid, setAmountPaid] = useState(0);
+            const [notes, setNotes] = useState('');
 
+            // Try to auto-fill customer based on phone
             useEffect(() => {
                 if (searchPhone.length >= 10) {
                     const found = customers.find(c => c.phone.includes(searchPhone));
-                    if (found) {
-                        setSelectedCust(found);
-                        setCustData({ name: found.name, phone: found.phone });
-                    } else {
-                        setSelectedCust(null);
-                        setCustData({ ...custData, phone: searchPhone });
-                    }
+                    if (found) setSelectedCustomer(found);
+                    else setSelectedCustomer(null);
+                } else {
+                    setSelectedCustomer(null);
                 }
-            }, [searchPhone]);
+            }, [searchPhone, customers]);
 
-            useEffect(() => {
-                const total = items.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
-                setPayment(prev => ({ ...prev, totalAmount: total }));
-            }, [items]);
+            const addItem = () => setItems([...items, { category: ITEM_CATEGORIES[0], quantity: 1, description: '', price: 0, images: [] }]);
+            
+            const updateItem = (index, field, value) => {
+                const newItems = [...items];
+                newItems[index][field] = value;
+                setItems(newItems);
+            };
 
-            const handleImageUpload = async (index, file) => {
+            const removeItem = (index) => {
+                if (items.length === 1) return;
+                const newItems = [...items];
+                newItems.splice(index, 1);
+                setItems(newItems);
+            };
+
+            const handleImageUpload = async (index, e) => {
+                const file = e.target.files[0];
                 if (!file) return;
-                setIsUploading(true);
+                showToast('Uploading custom design sketch...', 'info');
                 try {
                     const url = await uploadImage(file);
                     const newItems = [...items];
-                    newItems[index].images.push(url);
+                    newItems[index].images = [url];
                     setItems(newItems);
-                } catch (e) {
-                    showToast("Failed to upload image preview.", "error");
+                    showToast('Sketch attached successfully.', 'success');
+                } catch (err) {
+                    showToast('Failed to upload sketch asset.', 'error');
                 }
-                setIsUploading(false);
             };
 
-            const handleSubmit = (e) => {
+            const totalAmount = items.reduce((sum, item) => sum + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1), 0);
+
+            const handleSubmit = async (e) => {
                 e.preventDefault();
+                if (!selectedCustomer && searchPhone.length < 10) {
+                    showToast('Please provide a valid 10-digit mobile number for the client.', 'error');
+                    return;
+                }
+                if (!expectedDate) {
+                    showToast('Please set an expected delivery date.', 'error');
+                    return;
+                }
+
+                const custName = selectedCustomer ? selectedCustomer.name : 'Walk-in Client';
+
                 const newOrder = {
                     id: generateId('ORD'),
-                    customerName: custData.name,
-                    customerPhone: custData.phone,
-                    items,
+                    customerName: custName,
+                    customerPhone: searchPhone,
+                    items: items,
                     status: 'Order Received',
-                    orderDate: new Date().toISOString(),
-                    expectedDeliveryDate: expDate || new Date(Date.now() + 7*24*60*60*1000).toISOString(),
-                    totalAmount: payment.totalAmount,
-                    amountPaid: payment.amountPaid,
-                    notes: ''
+                    orderDate: new Date().toISOString().split('T')[0],
+                    expectedDeliveryDate: expectedDate,
+                    totalAmount,
+                    amountPaid: parseFloat(amountPaid) || 0,
+                    notes
                 };
-                addOrder(newOrder);
-                showToast(`Bespoke commission ${newOrder.id} generated!`, 'success');
-                setView('owner');
+
+                await addOrder(newOrder);
+                showToast('Order created successfully.', 'success');
+                setView('ownerDash');
             };
 
             return (
-                <div className="max-w-4xl mx-auto p-4 md:p-8 animate-fade-in pb-24">
-                     <button onClick={() => setView('owner')} className="text-sm font-bold text-slate-500 hover:text-brand-700 mb-6 flex items-center gap-2">
-                        <i className="fa-solid fa-arrow-left"></i> Back to Overview
+                <div className="max-w-3xl mx-auto p-4 md:p-8 animate-slide-up pb-24">
+                    <button onClick={() => setView('ownerDash')} className="mb-6 text-slate-500 hover:text-brand-600 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i className="fa-solid fa-arrow-left"></i> Back to Dashboard
                     </button>
-                    <h2 className="text-3xl font-bold text-slate-800 mb-8">Create Bespoke Order</h2>
                     
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-apple">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i className="fa-solid fa-user-circle text-brand-600"></i> Client Reference</h3>
-                            <div className="grid md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Search Mobile *</label>
-                                    <input required type="tel" value={searchPhone} onChange={e=>setSearchPhone(e.target.value)} placeholder="Type 10-digit number" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-medium" />
-                                    {selectedCust && <p className="text-xs text-green-600 mt-1.5 font-bold"><i className="fa-solid fa-circle-check"></i> Connected to Registered Client Profile</p>}
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Client Full Name *</label>
-                                    <input required value={custData.name} onChange={e=>setCustData({...custData, name: e.target.value})} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-medium" />
-                                </div>
+                        {/* Client Details */}
+                        <div className="glass-card rounded-3xl p-6 shadow-sm">
+                            <h3 className="text-lg font-bold text-slate-800 mb-4"><i className="fa-solid fa-user-circle text-brand-600 mr-2"></i> Client Information</h3>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase mb-2">Mobile Number</label>
+                                <input type="tel" value={searchPhone} onChange={e=>setSearchPhone(e.target.value.replace(/\D/g, ''))} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium" placeholder="Search or enter 10-digit number" maxLength="10" required />
+                                {selectedCustomer && (
+                                    <p className="text-sm font-medium text-green-600 mt-2 flex items-center gap-1"><i className="fa-solid fa-check-circle"></i> Found existing profile: {selectedCustomer.name}</p>
+                                )}
+                                {!selectedCustomer && searchPhone.length >= 10 && (
+                                    <p className="text-sm font-medium text-amber-600 mt-2"><i className="fa-solid fa-info-circle"></i> New client profile will be created for this number.</p>
+                                )}
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            {items.map((item, index) => (
-                                <div key={item.id} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-apple relative overflow-hidden animate-slide-up">
-                                    {items.length > 1 && (
-                                        <button type="button" onClick={() => setItems(items.filter((_, i) => i !== index))} className="absolute top-4 right-4 w-8 h-8 bg-red-50 text-red-500 rounded-full flex items-center justify-center hover:bg-red-100 transition-colors">
-                                            <i className="fa-solid fa-times"></i>
-                                        </button>
-                                    )}
-                                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Garment #{index + 1}</h3>
-                                    <div className="grid md:grid-cols-3 gap-5 mb-4">
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Category *</label>
-                                            <select value={item.category} onChange={e => { const n=[...items]; n[index].category=e.target.value; setItems(n); }} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-medium">
-                                                {ITEM_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Qty *</label>
-                                            <input type="number" min="1" value={item.quantity} onChange={e => { const n=[...items]; n[index].quantity=Number(e.target.value); setItems(n); }} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" required />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Unit Stitching Price (₹)</label>
-                                            <input type="number" min="0" value={item.price} onChange={e => { const n=[...items]; n[index].price=Number(e.target.value); setItems(n); }} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" />
-                                        </div>
-                                    </div>
-                                    <div className="mb-4">
-                                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Stitching Notes / Alteration Dimensions</label>
-                                        <textarea value={item.description} onChange={e => { const n=[...items]; n[index].description=e.target.value; setItems(n); }} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" rows="2" placeholder="Neck patterns, fit specifications, sleeves..."></textarea>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Design Reference / Measurement Swatches</label>
-                                        <div className="flex flex-wrap gap-3 items-center">
-                                            {item.images.map((img, i) => (
-                                                <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden group">
-                                                    <img src={img} className="w-full h-full object-cover" alt="design" />
-                                                    <div onClick={() => { const n=[...items]; n[index].images=n[index].images.filter((_,j)=>j!==i); setItems(n); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer text-white transition-opacity"><i className="fa-solid fa-trash"></i></div>
+                        {/* Order Items */}
+                        <div className="glass-card rounded-3xl p-6 shadow-sm">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-bold text-slate-800"><i className="fa-solid fa-scissors text-brand-600 mr-2"></i> Garment Details</h3>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                {items.map((item, idx) => (
+                                    <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 relative">
+                                        {items.length > 1 && (
+                                            <button type="button" onClick={() => removeItem(idx)} className="absolute top-4 right-4 text-slate-400 hover:text-red-500">
+                                                <i className="fa-solid fa-times-circle"></i>
+                                            </button>
+                                        )}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-500 mb-1">Category</label>
+                                                <select value={item.category} onChange={e => updateItem(idx, 'category', e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 text-sm">
+                                                    {ITEM_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="flex gap-4">
+                                                <div className="flex-1">
+                                                    <label className="block text-xs font-semibold text-slate-500 mb-1">Quantity</label>
+                                                    <input type="number" min="1" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 text-sm" required />
                                                 </div>
-                                            ))}
-                                            <label className="w-16 h-16 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-brand-500 hover:bg-brand-50 transition-colors text-slate-400">
-                                                {isUploading ? <i className="fa-solid fa-spinner fa-spin text-brand-500"></i> : <i className="fa-solid fa-plus"></i>}
-                                                <input type="file" accept="image/*" className="hidden" onChange={e => handleImageUpload(index, e.target.files[0])} disabled={isUploading} />
-                                            </label>
+                                                <div className="flex-1">
+                                                    <label className="block text-xs font-semibold text-slate-500 mb-1">Price (per unit)</label>
+                                                    <input type="number" min="0" value={item.price} onChange={e => updateItem(idx, 'price', e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 text-sm" required />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Design Specs / Measurements</label>
+                                            <textarea value={item.description} onChange={e => updateItem(idx, 'description', e.target.value)} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-brand-500 text-sm resize-none h-20" placeholder="Fabric details, exact measurements, styling requests..."></textarea>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-slate-500 mb-1">Reference Design Sketch</label>
+                                            <div className="flex items-center gap-4">
+                                                {item.images.length > 0 && <img src={item.images[0]} alt="Ref" className="w-12 h-12 rounded object-cover border border-slate-200" />}
+                                                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(idx, e)} className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                            <button type="button" onClick={() => setItems([...items, { id: Date.now(), category: ITEM_CATEGORIES[0], quantity: 1, price: 0, description: '', images: [] }])} className="w-full py-4 border-2 border-dashed border-brand-300 text-brand-700 font-bold rounded-3xl hover:bg-brand-50 transition-colors">
-                                + Stitched Item Category
-                            </button>
+                                ))}
+                            </div>
+                            <Button type="button" variant="outline" onClick={addItem} className="w-full mt-4 border-dashed py-3" icon="fa-plus">Add Another Garment</Button>
                         </div>
 
-                        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-apple">
-                            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i className="fa-solid fa-wallet text-accent-500"></i> Balance Sheet</h3>
-                            <div className="grid md:grid-cols-3 gap-5 items-end">
+                        {/* Scheduling & Payment */}
+                        <div className="glass-card rounded-3xl p-6 shadow-sm">
+                            <h3 className="text-lg font-bold text-slate-800 mb-4"><i className="fa-solid fa-calendar-check text-brand-600 mr-2"></i> Scheduling & Payment</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Delivery Date *</label>
-                                    <input required type="date" value={expDate} onChange={e=>setExpDate(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" />
+                                    <label className="block text-xs font-semibold text-slate-500 mb-2">Expected Delivery Date</label>
+                                    <input type="date" value={expectedDate} onChange={e=>setExpectedDate(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-medium" required />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Consolidated Amount (₹)</label>
-                                    <input type="number" readOnly value={payment.totalAmount} className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl outline-none text-sm font-bold text-slate-800" />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Advance Settled (₹)</label>
-                                    <input type="number" min="0" value={payment.amountPaid} onChange={e=>setPayment({...payment, amountPaid: Number(e.target.value)})} className="w-full px-4 py-3 bg-green-50 border border-green-200 rounded-xl outline-none text-sm font-bold text-green-700 focus:ring-2 focus:ring-green-500" />
+                                    <label className="block text-xs font-semibold text-slate-500 mb-2">Advance Paid (₹)</label>
+                                    <input type="number" min="0" value={amountPaid} onChange={e=>setAmountPaid(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-sm font-medium" />
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full mt-6 py-4 text-base">Generate Bespoke Commission</Button>
+                            
+                            <div className="bg-slate-800 text-white p-5 rounded-2xl flex justify-between items-center">
+                                <div>
+                                    <p className="text-xs text-slate-400 font-medium mb-1">Total Bill Amount</p>
+                                    <p className="text-2xl font-bold">₹{totalAmount}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs text-slate-400 font-medium mb-1">Balance Due</p>
+                                    <p className="text-xl font-bold text-accent-500">₹{totalAmount - (parseFloat(amountPaid) || 0)}</p>
+                                </div>
+                            </div>
                         </div>
+
+                        <Button type="submit" className="w-full py-4 text-lg" icon="fa-check-circle">Confirm & Generate Order</Button>
                     </form>
                 </div>
             );
         };
 
+        // --- MAIN APP CONTROLLER ---
         const App = () => {
             const [view, setView] = useState('login'); 
-            const [userRole, setUserRole] = useState('guest');
-            const [currentUser, setCurrentUser] = useState(null); 
+            const [user, setUser] = useState(null); 
+            const [orders, setOrders] = useState([]);
+            const [customers, setCustomers] = useState([]);
+            const [gallery, setGallery] = useState([]);
             const [toast, setToast] = useState(null);
-
-            // Local App States with automatic persistence settings
-            const [orders, setOrders] = useState(() => {
-                const stored = localStorage.getItem('jyothi_orders');
-                return stored ? JSON.parse(stored) : initialOrders;
-            });
-            const [customers, setCustomers] = useState(() => {
-                const stored = localStorage.getItem('jyothi_customers');
-                return stored ? JSON.parse(stored) : initialCustomers;
-            });
-            const [gallery, setGallery] = useState(() => {
-                const stored = localStorage.getItem('jyothi_gallery');
-                return stored ? JSON.parse(stored) : initialGallery;
-            });
-
-            const [dbSetupComplete, setDbSetupComplete] = useState(false);
+            
+            // Firebase State References
+            const [firebaseReady, setFirebaseReady] = useState(false);
+            const [isLiveMode, setIsLiveMode] = useState(false);
+            const [otpSent, setOtpSent] = useState(false);
+            const confirmationResultRef = useRef(null);
+            const recaptchaVerifierRef = useRef(null);
 
             const showToast = (message, type = 'info') => setToast({ message, type });
 
-            // Persist locally automatically
+            // Initialize connection to Firebase or Fallback
             useEffect(() => {
-                localStorage.setItem('jyothi_orders', JSON.stringify(orders));
-            }, [orders]);
+                const initializeFirebase = async () => {
+                    // Check if Firebase is provided by Web Sandbox Config
+                    const hasConfig = typeof __firebase_config !== 'undefined' && __firebase_config;
+                    
+                    if (hasConfig && window.FirebaseSDK) {
+                        try {
+                            const { initializeApp, getAuth, getFirestore, signInAnonymously, signInWithCustomToken } = window.FirebaseSDK;
+                            const config = JSON.parse(__firebase_config);
+                            const app = initializeApp(config);
+                            const db = getFirestore(app);
+                            const auth = getAuth(app);
+                            
+                            window.firebaseAppInstance = app;
+                            window.firebaseDbInstance = db;
+                            window.firebaseAuthInstance = auth;
 
-            useEffect(() => {
-                localStorage.setItem('jyothi_customers', JSON.stringify(customers));
-            }, [customers]);
+                            // Rule 3: Auth Before Queries
+                            const hasInitialToken = typeof __initial_auth_token !== 'undefined' && __initial_auth_token;
+                            if (hasInitialToken) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
 
-            useEffect(() => {
-                localStorage.setItem('jyothi_gallery', JSON.stringify(gallery));
-            }, [gallery]);
-
-            // Optional live synchronization using standard structural rules
-            useEffect(() => {
-                const initFirebase = async () => {
-                    if (!MY_FIREBASE_CONFIG) return; 
-                    try {
-                        const app = window.FirebaseSDK.initializeApp(MY_FIREBASE_CONFIG);
-                        const auth = window.FirebaseSDK.getAuth(app);
-                        const db = window.FirebaseSDK.getFirestore(app);
-                        const appId = 'jyothi-tailor-premium-app';
-
-                        await window.FirebaseSDK.signInAnonymously(auth);
-                        
-                        window.FirebaseSDK.onAuthStateChanged(auth, (user) => {
-                            if (!user) return;
-                            setDbSetupComplete(true);
-
-                            // Sync order updates cleanly
-                            const ordersRef = window.FirebaseSDK.collection(db, 'artifacts', appId, 'public', 'data', 'orders');
-                            window.FirebaseSDK.onSnapshot(ordersRef, (snapshot) => {
-                                const fbOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                                if (fbOrders.length > 0) setOrders(fbOrders);
-                            });
-
-                            // Sync clients updates cleanly
-                            const customersRef = window.FirebaseSDK.collection(db, 'artifacts', appId, 'public', 'data', 'customers');
-                            window.FirebaseSDK.onSnapshot(customersRef, (snapshot) => {
-                                const fbCusts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                                if (fbCusts.length > 0) setCustomers(fbCusts);
-                            });
-
-                            // Sync gallery collections cleanly
-                            const galleryRef = window.FirebaseSDK.collection(db, 'artifacts', appId, 'public', 'data', 'gallery');
-                            window.FirebaseSDK.onSnapshot(galleryRef, (snapshot) => {
-                                const fbGal = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                                if (fbGal.length > 0) setGallery(fbGal);
-                            });
-                        });
-                    } catch (e) {
-                        console.log("Firebase config not defined. Utilizing localized storage states.", e);
+                            setIsLiveMode(true);
+                            setFirebaseReady(true);
+                            showToast("Connected to live secure cloud server.", "success");
+                        } catch (err) {
+                            console.error("Firebase startup issues:", err);
+                            setupFallbackData();
+                        }
+                    } else {
+                        setupFallbackData();
                     }
                 };
-                initFirebase();
+
+                const setupFallbackData = () => {
+                    const localOrders = localStorage.getItem('ja_orders');
+                    const localCustomers = localStorage.getItem('ja_customers');
+                    const localGallery = localStorage.getItem('ja_gallery');
+                    
+                    if (localOrders && localCustomers) {
+                        setOrders(JSON.parse(localOrders));
+                        setCustomers(JSON.parse(localCustomers));
+                    } else {
+                        setOrders(initialOrders);
+                        setCustomers(initialCustomers);
+                        localStorage.setItem('ja_orders', JSON.stringify(initialOrders));
+                        localStorage.setItem('ja_customers', JSON.stringify(initialCustomers));
+                    }
+
+                    if (localGallery) {
+                        setGallery(JSON.parse(localGallery));
+                    } else {
+                        setGallery(initialGallery);
+                        localStorage.setItem('ja_gallery', JSON.stringify(initialGallery));
+                    }
+                    
+                    const savedUser = localStorage.getItem('ja_user');
+                    if (savedUser) {
+                        const parsed = JSON.parse(savedUser);
+                        setUser(parsed);
+                        setView(parsed.role === 'admin' ? 'ownerDash' : 'clientDash');
+                    }
+                    setFirebaseReady(true);
+                };
+
+                // Listen for modular SDK ready trigger
+                if (window.FirebaseSDK) {
+                    initializeFirebase();
+                } else {
+                    window.addEventListener('FirebaseSDKReady', initializeFirebase);
+                }
+
+                return () => {
+                    window.removeEventListener('FirebaseSDKReady', initializeFirebase);
+                };
             }, []);
 
-            const syncToDb = async (collectionName, docId, data) => {
-                if (!dbSetupComplete || !MY_FIREBASE_CONFIG) return;
+            // Firebase Live Snapshot Listeners (Rule 1 & Rule 2 compliant)
+            useEffect(() => {
+                if (!isLiveMode || !firebaseReady) return;
+                
+                const db = window.firebaseDbInstance;
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-atelier';
+                const { onSnapshot, collection, query } = window.FirebaseSDK;
+
+                // Rule 1: Strict Paths
+                const ordersRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+                const customersRef = collection(db, 'artifacts', appId, 'public', 'data', 'customers');
+                const galleryRef = collection(db, 'artifacts', appId, 'public', 'data', 'gallery');
+
+                // Rule 2: Simple queries, fetch all and filter in memory
+                const unsubOrders = onSnapshot(query(ordersRef), (snap) => {
+                    const list = [];
+                    snap.forEach(doc => list.push({ docId: doc.id, ...doc.data() }));
+                    setOrders(list.length ? list : initialOrders);
+                }, (err) => console.error("Orders sync error:", err));
+
+                const unsubCustomers = onSnapshot(query(customersRef), (snap) => {
+                    const list = [];
+                    snap.forEach(doc => list.push({ docId: doc.id, ...doc.data() }));
+                    setCustomers(list.length ? list : initialCustomers);
+                }, (err) => console.error("Customers sync error:", err));
+
+                const unsubGallery = onSnapshot(query(galleryRef), (snap) => {
+                    const list = [];
+                    snap.forEach(doc => list.push({ docId: doc.id, ...doc.data() }));
+                    setGallery(list.length ? list : initialGallery);
+                }, (err) => console.error("Gallery sync error:", err));
+
+                return () => {
+                    unsubOrders();
+                    unsubCustomers();
+                    unsubGallery();
+                };
+            }, [isLiveMode, firebaseReady]);
+
+            // --- REAL SMS OTP MANAGEMENT ---
+            const triggerSendOTP = async (phoneNumber) => {
+                if (!isLiveMode) {
+                    // Fallback simulated OTP mode if configuration isn't connected yet
+                    showToast("Simulated verification path trigger.", "info");
+                    setTimeout(() => {
+                        setOtpSent(true);
+                        showToast("Simulated code sent! Use any 6 digits.", "success");
+                    }, 1000);
+                    return;
+                }
+
+                const auth = window.firebaseAuthInstance;
+                const { RecaptchaVerifier, signInWithPhoneNumber } = window.FirebaseSDK;
+
                 try {
-                    const db = window.FirebaseSDK.getFirestore();
-                    const appId = 'jyothi-tailor-premium-app';
-                    const docRef = window.FirebaseSDK.doc(db, 'artifacts', appId, 'public', 'data', collectionName, docId);
-                    await window.FirebaseSDK.setDoc(docRef, data, { merge: true });
-                } catch(e) { console.error("Cloud syncing database error: ", e); }
-            };
+                    if (!recaptchaVerifierRef.current) {
+                        recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                            size: 'invisible',
+                            callback: () => {}
+                        });
+                    }
 
-            const handleLogin = (role, id) => {
-                setUserRole(role);
-                setCurrentUser(id);
-                setView(role === 'admin' ? 'owner' : 'client');
-                showToast(`Successfully signed in.`, 'success');
-            };
-
-            const handleLogout = () => {
-                setUserRole('guest');
-                setCurrentUser(null);
-                setView('login');
-            };
-
-            const addOrder = (newOrder) => {
-                setOrders(prev => [newOrder, ...prev]);
-                syncToDb('orders', newOrder.id, newOrder);
-            };
-
-            const addCustomer = (newCust) => {
-                setCustomers(prev => [newCust, ...prev]);
-                syncToDb('customers', newCust.id, newCust);
-            };
-
-            const updateOrderStatus = (id, status) => {
-                const updatedOrders = orders.map(o => o.id === id ? { ...o, status, deliveryDate: status === 'Delivered' ? new Date().toISOString() : o.deliveryDate } : o);
-                setOrders(updatedOrders);
-                const orderToUpdate = updatedOrders.find(o => o.id === id);
-                if (orderToUpdate) {
-                    syncToDb('orders', id, orderToUpdate);
-                    showToast(`Order marked as ${status}`, 'success');
+                    // Format local number to standard international dial format
+                    const formattedNum = phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`;
+                    const confirmationResult = await signInWithPhoneNumber(auth, formattedNum, recaptchaVerifierRef.current);
+                    
+                    confirmationResultRef.current = confirmationResult;
+                    setOtpSent(true);
+                    showToast("SMS Verification code delivered!", "success");
+                } catch (error) {
+                    console.error("SMS verification failed:", error);
+                    showToast(`SMS failed. Enable Phone Authentication in your Firebase Console.`, "error");
                 }
             };
 
+            const triggerVerifyOTP = async (otpCode) => {
+                if (!isLiveMode) {
+                    // Simulated sign in
+                    const savedUser = { role: 'client', phone: '9876543210' };
+                    setUser(savedUser);
+                    localStorage.setItem('ja_user', JSON.stringify(savedUser));
+                    setView('clientDash');
+                    setOtpSent(false);
+                    showToast("Successfully signed in.", "success");
+                    return;
+                }
+
+                try {
+                    const result = await confirmationResultRef.current.confirm(otpCode);
+                    const savedUser = { role: 'client', phone: result.user.phoneNumber };
+                    setUser(savedUser);
+                    setView('clientDash');
+                    setOtpSent(false);
+                    showToast("Authenticated successfully!", "success");
+                } catch (error) {
+                    console.error("Incorrect verification code:", error);
+                    showToast("Invalid OTP Code. Please re-enter.", "error");
+                }
+            };
+
+            // --- REAL FIREBASE PERSISTENCE (Firestore) ---
+            const addCustomer = async (customer) => {
+                if (isLiveMode) {
+                    const db = window.firebaseDbInstance;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-atelier';
+                    const { doc, setDoc } = window.FirebaseSDK;
+                    
+                    // Create document on path structure
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'customers', customer.id), customer);
+                } else {
+                    const updated = [...customers, customer];
+                    setCustomers(updated);
+                    localStorage.setItem('ja_customers', JSON.stringify(updated));
+                }
+            };
+            
+            const addOrder = async (order) => {
+                if (isLiveMode) {
+                    const db = window.firebaseDbInstance;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-atelier';
+                    const { doc, setDoc } = window.FirebaseSDK;
+                    
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', order.id), order);
+                } else {
+                    const updated = [order, ...orders];
+                    setOrders(updated);
+                    localStorage.setItem('ja_orders', JSON.stringify(updated));
+                }
+            };
+
+            const addGalleryItem = async (item) => {
+                if (isLiveMode) {
+                    const db = window.firebaseDbInstance;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-atelier';
+                    const { doc, setDoc } = window.FirebaseSDK;
+                    
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'gallery', item.id), item);
+                } else {
+                    const updated = [item, ...gallery];
+                    setGallery(updated);
+                    localStorage.setItem('ja_gallery', JSON.stringify(updated));
+                }
+            };
+            
+            const deleteGalleryItem = async (id) => {
+                if (isLiveMode) {
+                    const db = window.firebaseDbInstance;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-atelier';
+                    const { doc, deleteDoc } = window.FirebaseSDK;
+                    
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'gallery', id));
+                } else {
+                    const updated = gallery.filter(item => item.id !== id);
+                    setGallery(updated);
+                    localStorage.setItem('ja_gallery', JSON.stringify(updated));
+                }
+                showToast('Item removed from portfolio.', 'success');
+            };
+            
+            const updateOrderStatus = async (orderId, newStatus) => {
+                const targetOrder = orders.find(o => o.id === orderId);
+                if (!targetOrder) return;
+
+                const updatedData = { ...targetOrder, status: newStatus };
+                if (newStatus === 'Delivered') updatedData.deliveryDate = new Date().toISOString();
+
+                if (isLiveMode) {
+                    const db = window.firebaseDbInstance;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'jyothi-atelier';
+                    const { doc, setDoc } = window.FirebaseSDK;
+                    
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId), updatedData);
+                } else {
+                    const updated = orders.map(o => o.id === orderId ? updatedData : o);
+                    setOrders(updated);
+                    localStorage.setItem('ja_orders', JSON.stringify(updated));
+                }
+                showToast(`Order status updated to ${newStatus}`, 'success');
+            };
+
+            const handleLogin = (role, phone) => {
+                const userData = { role, phone };
+                setUser(userData);
+                localStorage.setItem('ja_user', JSON.stringify(userData));
+                setView(role === 'admin' ? 'ownerDash' : 'clientDash');
+            };
+
+            const handleLogout = () => {
+                setUser(null);
+                localStorage.removeItem('ja_user');
+                setView('login');
+            };
+
+            if (!firebaseReady) return <div className="min-h-screen flex items-center justify-center text-brand-900 font-bold text-xl"><i className="fa-solid fa-circle-notch fa-spin mr-3"></i> Syncing security systems...</div>;
+
             return (
-                <div className="min-h-screen relative overflow-hidden flex flex-col">
-                    {/* Atmospheric luxury backdrop design */}
-                    <div className="fixed inset-0 z-[-1] bg-pattern">
-                        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-100/30 rounded-full blur-3xl"></div>
-                        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent-100/30 rounded-full blur-3xl"></div>
-                    </div>
-
-                    {/* Desktop/Mobile header logo container */}
-                    <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
-                        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 bg-brand-900 text-accent-500 rounded-xl flex items-center justify-center font-serif font-bold text-xl shadow-md">J</div>
-                                <span className="font-serif font-bold text-brand-900 text-xl tracking-tight">{SHOP_NAME}</span>
+                <div className="min-h-screen flex flex-col relative">
+                    {/* Header bar for internal views */}
+                    {view !== 'login' && (
+                        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
+                            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-brand-900 text-accent-500 rounded-lg flex items-center justify-center font-serif font-bold shadow-sm">J</div>
+                                    <span className="font-serif font-bold text-slate-800 tracking-wide">{SHOP_NAME}</span>
+                                </div>
+                                {user?.role === 'admin' && (
+                                    <span className="text-xs font-bold uppercase tracking-widest text-brand-600 bg-brand-50 px-2 py-1 rounded">Owner Mode</span>
+                                )}
                             </div>
-                            <div className="flex items-center gap-4">
-                                {userRole === 'admin' && <span className="text-xs font-bold text-brand-700 bg-brand-50 px-3 py-1.5 rounded-full border border-brand-100">Atelier Owner</span>}
-                                {userRole === 'client' && <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">{currentUser}</span>}
-                            </div>
-                        </div>
-                    </nav>
+                        </header>
+                    )}
 
-                    {/* Routing logic containers */}
-                    <main className="flex-1 relative z-10">
-                        {view === 'login' && <LoginView onLogin={handleLogin} showToast={showToast} />}
-                        {view === 'client' && <ClientDashboard phone={currentUser} orders={orders} gallery={gallery} logout={handleLogout} />}
-                        {view === 'owner' && <OwnerDashboard orders={orders} customers={customers} setView={setView} updateOrderStatus={updateOrderStatus} logout={handleLogout} showToast={showToast} />}
-                        {view === 'galleryManager' && <OwnerGalleryManager gallery={gallery} setGallery={setGallery} setView={setView} showToast={showToast} />}
-                        {view === 'newOrder' && <OrderCreationForm setView={setView} addOrder={addOrder} customers={customers} showToast={showToast} />}
-                        {view === 'newCustomer' && <WalkInCustomerForm setView={setView} addCustomer={addCustomer} showToast={showToast} />}
+                    {/* View Router */}
+                    <main className="flex-1">
+                        {view === 'login' && (
+                            <LoginView 
+                                onLogin={handleLogin} 
+                                showToast={showToast} 
+                                authReady={isLiveMode} 
+                                sendOTP={triggerSendOTP} 
+                                verifyOTP={triggerVerifyOTP}
+                                otpSent={otpSent}
+                            />
+                        )}
+                        {view === 'clientDash' && <ClientDashboard phone={user?.phone} orders={orders} gallery={gallery} logout={handleLogout} />}
+                        {view === 'ownerDash' && <OwnerDashboard orders={orders} customers={customers} gallery={gallery} setView={setView} updateOrderStatus={updateOrderStatus} logout={handleLogout} showToast={showToast} addGalleryItem={addGalleryItem} deleteGalleryItem={deleteGalleryItem} isLive={isLiveMode} />}
+                        {view === 'newCustomer' && <NewCustomerForm setView={setView} addCustomer={addCustomer} showToast={showToast} />}
+                        {view === 'newOrder' && <NewOrderForm setView={setView} addOrder={addOrder} customers={customers} showToast={showToast} />}
                     </main>
 
-                    {/* Custom alerts toast notifications */}
+                    {/* Global Toast */}
                     {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
                 </div>
             );
